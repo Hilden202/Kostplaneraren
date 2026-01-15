@@ -17,7 +17,7 @@ const getPageChunk = () => (isMobile() ? 25 : 50);
 
 // --- Källa: Livsmedelsverket ---
 const LMV_SOURCE_URL = "https://soknaringsinnehall.livsmedelsverket.se/";
-const LMV_VERSION = "2025-06-09"; // hårdkodat för nuvarande version
+const LMV_VERSION = "2025-10-29"; // hårdkodat för nuvarande version
 
 function deriveLmvVersion(rawText) { //Denna fungerar inte just nu
   // matchar "version YYYY-MM-DD" (skiftlägesokänsligt, tolererar extra mellanrum)
