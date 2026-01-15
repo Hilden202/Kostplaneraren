@@ -1,4 +1,4 @@
-# Matplaneraren 🥗
+# Kostplaneraren 🥗
 Planera måltider med näringsdata från Livsmedelsverkets öppna API.
 
 🔗 Live: https://kostplaneraren.se
