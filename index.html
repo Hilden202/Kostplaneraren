@@ -74,8 +74,33 @@
   <form>
     <div id="searchInput">
       <h1 class="site-title">Kostplaneraren.se</h1>
-      <p class="site-sub">Planera måltider med näringsdata</p>
+      <p class="site-sub">
+        Hitta livsmedel som passar din kosthållning – från LCHF till energisnål vardagsmat
+      </p>
        <a class="site-credits" href="https://hildenmedia.se/" target="_blank" rel="noopener">© HildenMedia</a>
+
+        <div class="quick-filters" aria-label="Snabbval för kosthållning">
+          <button type="button" data-filter="lchf_strikt"
+                  title="Låg kolhydratmängd per 100 g">
+            LCHF / Keto
+          </button>
+
+          <button type="button" data-filter="hogprotein"
+                  title="Proteinrikt per 100 g">
+            Proteinrikt
+          </button>
+
+          <button type="button" data-filter="fiberrik"
+                  title="Bra för mage & tarm">
+            Mage & tarm
+          </button>
+
+          <button type="button" data-filter="lag_energi"
+                  title="Låg energitäthet per 100 g">
+            Energismart
+          </button>
+        </div>
+
        <div class="diet-filter">
        <label for="dietSelect" style="margin-right:6px;">Filter:</label>
           <select id="dietSelect">

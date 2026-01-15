@@ -982,3 +982,26 @@ button:not(.clear-btn):hover{
     height: calc(100vh - 8px);
   }
 }
+
+.quick-filters{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 6px;
+}
+
+.quick-filters button{
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.25);
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.quick-filters button:hover{
+  background: var(--color-teal);
+  border-color: var(--color-teal);
+}

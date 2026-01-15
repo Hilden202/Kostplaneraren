@@ -1334,3 +1334,11 @@ document.addEventListener('wheel', (e) => {
     slider.dispatchEvent(new Event('input', { bubbles: true }));
   }
 }, { passive: false });
+
+document.querySelectorAll(".quick-filters button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const select = document.getElementById("dietSelect");
+    select.value = btn.dataset.filter;
+    select.dispatchEvent(new Event("change"));
+  });
+});
