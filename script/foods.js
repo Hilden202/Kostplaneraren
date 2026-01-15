@@ -165,6 +165,7 @@ dietSelect?.addEventListener('change', () => {
 
   // Kör om aktuell sökning så listan uppdateras med filtret
   doSearch(searchInput.value);
+  setActiveQuickFilter(dietSelect.value);
 });
 
 
@@ -1342,3 +1343,11 @@ document.querySelectorAll(".quick-filters button").forEach(btn => {
     select.dispatchEvent(new Event("change"));
   });
 });
+
+function setActiveQuickFilter(value) {
+  document.querySelectorAll(".quick-filters button")
+    .forEach(b => b.classList.toggle(
+      "is-active",
+      b.dataset.filter === value
+    ));
+}
