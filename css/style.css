@@ -1005,3 +1005,8 @@ button:not(.clear-btn):hover{
   background: var(--color-teal);
   border-color: var(--color-teal);
 }
+
+.site-home-link {
+  color: inherit;
+  text-decoration: none;
+}
