@@ -31,6 +31,8 @@ let isAppending = false;
 let io = null;
 let sentinel = null;
 let dietFilter = { type: 'all' };
+let activeQuickFilter = null;
+let changingFromQuickFilter = false;
 
 const nutritionCache = new Map(); // cache för /naringsvarden per livsmedels-id
 const classCache = new Map();     // cache för /klassificeringar per livsmedels-id
@@ -145,27 +147,33 @@ function clearEmptyStates() {
 
 const dietSelect = document.getElementById('dietSelect');
 dietSelect?.addEventListener('change', () => {
+
+  // 🔥 Endast om användaren ändrade dropdownen manuellt
+  if (!changingFromQuickFilter) {
+    activeQuickFilter = null;
+    document.querySelectorAll(".quick-filters button")
+      .forEach(b => b.classList.remove("is-active"));
+  }
+
   const v = dietSelect.value;
-  // Mappning från menyvärden → interna filtertyper
+
   const map = {
     'alla':        'all',
-    'keto_x':      'keto3',        // ≤ 3 g nettokolhydrater (fallback till total om netto saknas)
-    'lchf_strikt': 'lchf5',        // ≤ 5 g netto
-    'lchf_liberal':'lchf10',       // ≤ 10 g netto
-    'hogprotein':  'hp20',         // ≥ 20 g protein/100 g
-    'lag_fett':    'lowfat3',      // ≤ 3 g fett/100 g
-    'lag_mattat':  'lowsat1_5',    // ≤ 1.5 g mättat fett/100 g
-    'medelhav':    'medelhav',     // omättat ≥ 2× mättat (approx: (totalt−mättat) ≥ 2×mättat)
-    'lag_socker':  'sugar5',       // ≤ 5 g socker/100 g
-    'lag_salt':    'lowsalt0_3',   // ≤ 0.3 g salt/100 g
-    'fiberrik':    'fiber6',       // ≥ 6 g fiber/100 g
-    'lag_energi':  'lowkcal80'     // ≤ 80 kcal/100 g
+    'keto_x':      'keto3',
+    'lchf_strikt': 'lchf5',
+    'lchf_liberal':'lchf10',
+    'hogprotein':  'hp20',
+    'lag_fett':    'lowfat3',
+    'lag_mattat':  'lowsat1_5',
+    'medelhav':    'medelhav',
+    'lag_socker':  'sugar5',
+    'lag_salt':    'lowsalt0_3',
+    'fiberrik':    'fiber6',
+    'lag_energi':  'lowkcal80'
   };
-  dietFilter = { type: map[v] ?? 'all' };
 
-  // Kör om aktuell sökning så listan uppdateras med filtret
+  dietFilter = { type: map[v] ?? 'all' };
   doSearch(searchInput.value);
-  setActiveQuickFilter(dietSelect.value);
 });
 
 
@@ -501,6 +509,31 @@ document.addEventListener("DOMContentLoaded", () => {
   showEmptyState();        // din välkomstvy
   updateDrawerCount();     // initiera "(n)" direkt
   bindAutoHideHeader();
+});
+
+document.getElementById("homeReset")?.addEventListener("click", (e) => {
+  e.preventDefault(); // stoppa navigation
+
+  // 1. Rensa sök
+  searchInput.value = "";
+  lastSearchTerm = "";
+
+  // 2. Reset filter-state
+  dietFilter = { type: "all" };
+  activeQuickFilter = null;
+  changingFromQuickFilter = false;
+
+  // 3. Reset UI
+  document.getElementById("dietSelect").value = "alla";
+  document
+    .querySelectorAll(".quick-filters button")
+    .forEach(b => b.classList.remove("is-active"));
+
+  // 4. Visa startläget
+  showEmptyState();
+
+  // (valfritt) stäng mobil-drawer
+  setDrawerOpen(false);
 });
 
 let foodData = [];
@@ -1338,9 +1371,36 @@ document.addEventListener('wheel', (e) => {
 
 document.querySelectorAll(".quick-filters button").forEach(btn => {
   btn.addEventListener("click", () => {
+    const filter = btn.dataset.filter;
     const select = document.getElementById("dietSelect");
-    select.value = btn.dataset.filter;
+
+    // 🔁 Klick på redan aktiv knapp → slå AV
+    if (activeQuickFilter === filter) {
+      activeQuickFilter = null;
+
+      // reset UI
+      btn.classList.remove("is-active");
+      select.value = "alla";
+      searchInput.value = "";
+
+      // visa empty state igen
+      showEmptyState();
+      return;
+    }
+
+    // 🆕 Nytt filter → slå PÅ
+    activeQuickFilter = filter;
+
+    // rensa tidigare aktiva knappar
+    document.querySelectorAll(".quick-filters button")
+      .forEach(b => b.classList.remove("is-active"));
+
+    btn.classList.add("is-active");
+
+    changingFromQuickFilter = true;
+    select.value = filter;
     select.dispatchEvent(new Event("change"));
+    changingFromQuickFilter = false;
   });
 });
 
