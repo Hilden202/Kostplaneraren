@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Turkos bakgrund med rundade hörn -->
-  <rect x="2" y="2" width="60" height="60" rx="10" fill="#008080"></rect>
-  <!-- Monogram: KP (använder system-sans, exportera till PNG för pixelperfekt) -->
-  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, Arial, sans-serif" font-size="30" font-weight="800" fill="#ffffff">KP</text>
-</svg>
