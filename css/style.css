@@ -1024,3 +1024,9 @@ button:not(.clear-btn):hover{
   color: #fff;
   box-shadow: 0 0 0 2px rgba(0,128,128,.35);
 }
+
+.brand-mark {
+  height: 24px;
+  width: auto;
+  opacity: 0.9;
+}
