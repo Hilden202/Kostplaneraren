@@ -66,9 +66,10 @@ html {
 
 .header-meta .brand-mark {
   position: absolute;
-  top: 6px;
+  top: 50%;
+  transform: translateY(-50%);
   right: 12px;
-  width: 36px;
+  width: 48px;
   height: auto;
   display: block;
 }
@@ -1023,10 +1024,4 @@ button:not(.clear-btn):hover{
   border-color: var(--color-teal);
   color: #fff;
   box-shadow: 0 0 0 2px rgba(0,128,128,.35);
-}
-
-.brand-mark {
-  height: 32px;
-  width: auto;
-  opacity: 0.9;
 }
