@@ -1025,3 +1025,21 @@ button:not(.clear-btn):hover{
   color: #fff;
   box-shadow: 0 0 0 2px rgba(0,128,128,.35);
 }
+.seo-text {
+  max-width: 900px;
+  margin: 60px auto 80px;
+  padding: 16px;
+  border-top: 1px solid #e5e7eb;
+  color: #555;
+}
+
+.seo-text h2 {
+  font-size: clamp(20px, 2.6vw, 26px);
+  margin-bottom: 8px;
+}
+
+.seo-text p {
+  line-height: 1.6;
+  font-size: 15px;
+  color: #555;
+}
