@@ -1043,3 +1043,17 @@ button:not(.clear-btn):hover{
   font-size: 15px;
   color: #555;
 }
+
+.hm-mark{
+  height: 22px;   /* diskret */
+  width: auto;
+  vertical-align: bottom;
+  margin-top: 6px;
+  transition: opacity .15s ease;
+}
+
+@media (max-width: 520px){
+  .hm-mark{
+    height: 18px;
+  }
+}
