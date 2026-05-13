@@ -1,1059 +1,1591 @@
-body {
-  background-color: #f7f9f9; /* Ljust, nästan vitt med kall ton */
-  font-family: 'Segoe UI', sans-serif;
+/* =================================
+   GLOBAL
+================================= */
+:root {
+  --bg: #07100d;
+  --bg-deep: #030806;
+  --surface: rgba(11, 22, 18, 0.82);
+  --surface-strong: rgba(13, 27, 22, 0.96);
+  --surface-soft: rgba(255, 255, 255, 0.045);
+  --border: rgba(191, 232, 201, 0.16);
+  --border-strong: rgba(142, 219, 92, 0.36);
+  --text: #f3f7f2;
+  --text-muted: rgba(229, 238, 229, 0.72);
+  --text-soft: rgba(229, 238, 229, 0.56);
+  --accent: #73c83e;
+  --accent-strong: #8fe35a;
+  --accent-deep: #1f5f34;
+  --cyan: #28b7ab;
+  --amber: #f5b61d;
+  --danger: #ff6b5f;
+  --shadow: 0 18px 48px rgba(0, 0, 0, 0.34);
+  --shadow-soft: 0 10px 28px rgba(0, 0, 0, 0.2);
+  --radius: 8px;
+  --max-page: 1480px;
+  --header-meta-h: 52px;
+  --header-h: 260px;
+  --modal-top: 16vh;
+  --modal-bottom: 6vh;
 }
 
-html, body {
-  height: auto;
+* {
+  box-sizing: border-box;
 }
 
 html {
   max-width: 100vw;
   scroll-padding-top: var(--header-h);
-  scroll-behavior: smooth;  
+  scroll-behavior: smooth;
+  background: var(--bg-deep);
 }
 
-/* ===== Theme tokens ===== */
-:root{
-  --color-slate:#1d2326;     /* mörk headerbakgrund */
-  --color-teal:#008080;      /* accent */
-  --color-teal-dark:#006666; /* hover */
-  --text-on-slate:#ffffff;   /* rubrik i header */
-  --text-on-slate-dim:rgba(255,255,255,.82); /* undertitel i header */
-  --header-meta-h: 52px;   /* reservyta för badge + ikon */  
-  --header-h: 180px; /* fallback; JS sets the real value */
-    /* Modalplacering – justera här istället för margin på .modal-content */
-  --modal-top: 26vh;              /* flytta ned/upp modalen */
-  --modal-bottom: 6vh;
+html,
+body {
+  min-height: 100%;
+  height: auto;
 }
 
-/* Mobil: lägg modalen ännu lite längre ned + ta höjd för safe area */
-@media (max-width: 520px){
-  :root{
-    --modal-top: 16vh;
-    --modal-bottom: max(7vh, env(safe-area-inset-bottom));
-  }
+body {
+  margin: 0;
+  overflow-x: hidden;
+  color: var(--text);
+  font-family: Inter, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  background:
+    radial-gradient(circle at 70% -20%, rgba(99, 184, 55, 0.16), transparent 36rem),
+    radial-gradient(circle at 8% 0%, rgba(40, 183, 171, 0.09), transparent 28rem),
+    linear-gradient(145deg, #040b08 0%, #07120e 45%, #101511 100%);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-.header-top{
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent 72%);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  border: 0;
+}
+
+a {
+  color: inherit;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h3 {
+  margin: 0;
+  font-size: clamp(18px, 2vw, 23px);
+  line-height: 1.22;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(143, 227, 90, 0.24);
+  border: 3px solid rgba(0, 0, 0, 0);
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.035);
+}
+
+/* =================================
+   HEADER
+================================= */
+.header-top {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--color-slate);
-  padding: 16px 14px 14px;
-  border-bottom: 1px solid rgba(255,255,255,.08);
-  /* Gör hörnplacering möjlig */
-  position: sticky;
+  padding: 24px clamp(14px, 3vw, 32px) 18px;
+  background:
+    linear-gradient(180deg, rgba(3, 10, 7, 0.96), rgba(5, 16, 12, 0.9)),
+    radial-gradient(circle at 64% 0%, rgba(115, 200, 62, 0.14), transparent 34rem);
+  border-bottom: 1px solid rgba(191, 232, 201, 0.12);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+  transform: translateY(0);
+  transition: transform 0.18s ease;
+  will-change: transform;
+  backdrop-filter: blur(16px);
 }
 
-.header-meta {
-  position: relative;
-  min-height: var(--header-meta-h);
+.header-shell {
+  width: min(100%, var(--max-page));
+  margin: 0 auto;
 }
 
-.header-meta .data-badge {
-  position: absolute;
-  top: 6px;
-  right: 64px;
-  background: #e5e7eb;
-  color: #111827;
-  font-weight: 800;
-  font-size: clamp(12px, 2.8vw, 16px); /* 👈 responsivt likt H1 */
-  padding: 6px 10px;                    /* tajtare på små skärmar */
-  border-radius: 9999px;
-  white-space: nowrap;
+.brand-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(14px, 2.4vw, 26px);
 }
 
-.header-meta .brand-mark {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 12px;
-  width: 48px;
-  height: auto;
+.brand-mark {
+  width: clamp(62px, 7vw, 94px);
+  height: clamp(62px, 7vw, 94px);
   display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 26px rgba(89, 197, 56, 0.18));
 }
 
-/* Sök-wrapper: begränsa bredd och undvik overflow */
-#searchInput {
-  position: relative;
-  max-width: 100%;        /* desktop-tak */
-  width: 100%;           /* fyll tillgängligt utrymme */
-  margin: 0;             /* ingen extra marginal */
+.brand-copy {
+  min-width: 0;
 }
 
-@media (max-width: 520px){
-  .header-meta { min-height: 48px; }
-  .header-meta .data-badge{
-    right: 56px;
-    font-size: 14px;
-    padding: 8px 12px;
-  }
-  .header-meta .brand-mark{
-    width: 30px; height: 30px;
-  }
-}
-
-/* Titel/undertitel i headern */
-.site-title{
-  color: var(--text-on-slate);
+.site-title {
+  margin: 0 0 4px;
+  color: var(--text);
+  font-size: clamp(29px, 3.4vw, 43px);
   font-weight: 800;
-  font-size: clamp(26px, 4.5vw, 40px);
-  margin: 0 0 2px 0;
-  letter-spacing:.2px;
+  letter-spacing: 0;
+  line-height: 1.04;
 }
-.site-title a,
-.site-title a:visited,
-.site-title a:hover,
-.site-title a:focus {
+
+.site-home-link,
+.site-home-link:visited,
+.site-home-link:hover,
+.site-home-link:focus {
   color: inherit;
   text-decoration: none;
 }
-.site-sub{
-  color: var(--text-on-slate-dim);
-  margin: 0 0 10px 0;
-  font-size: clamp(14px, 2.2vw, 18px);
+
+.brand-accent {
+  color: var(--accent);
 }
 
-.main-left, .main-right {
+.site-sub {
+  max-width: 660px;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: clamp(15px, 1.5vw, 18px);
+}
+
+.header-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.data-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.data-badge i {
+  color: var(--accent);
+}
+
+.data-version {
+  color: var(--text);
+}
+
+.search-panel {
+  margin-top: 22px;
+  padding: clamp(14px, 2vw, 18px);
+  background: linear-gradient(135deg, rgba(9, 20, 16, 0.82), rgba(5, 14, 11, 0.7));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+}
+
+#searchInput {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+}
+
+.search-row {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 18px;
+  z-index: 1;
+  transform: translateY(-50%);
+  color: rgba(237, 245, 235, 0.68);
+  font-size: 18px;
+  pointer-events: none;
+}
+
+#foodInput {
+  display: block;
+  width: 100%;
+  height: 58px;
+  padding: 0 50px 0 52px;
+  color: var(--text);
+  font-size: 17px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(221, 244, 222, 0.2);
+  border-radius: var(--radius);
+  outline: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.015);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+#foodInput::placeholder {
+  color: rgba(235, 242, 235, 0.52);
+}
+
+#foodInput:focus {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(143, 227, 90, 0.62);
+  box-shadow: 0 0 0 3px rgba(115, 200, 62, 0.16);
+}
+
+.clear-btn {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: rgba(235, 242, 235, 0.68);
+  background: transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.clear-btn:hover,
+.clear-btn:focus-visible {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+  outline: none;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.quick-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.quick-filters button,
+.diet-filter select,
+#clearListButton,
+#loadMoreBtn,
+#modalAddBtn,
+.adjust-button {
+  min-height: 42px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(221, 244, 222, 0.17);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: transform 0.14s ease, border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.quick-filters button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.quick-filters button i {
+  color: rgba(218, 244, 213, 0.82);
+}
+
+.quick-filters button:hover,
+.quick-filters button:focus-visible,
+.quick-filters button.is-active {
+  background: linear-gradient(135deg, rgba(115, 200, 62, 0.34), rgba(31, 95, 52, 0.38));
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 3px rgba(115, 200, 62, 0.12);
+  outline: none;
+}
+
+.quick-filters button:active,
+#clearListButton:active,
+#loadMoreBtn:active,
+#modalAddBtn:active,
+.adjust-button:active {
+  transform: translateY(1px);
+}
+
+.diet-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 245px;
+}
+
+.diet-filter label {
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.diet-filter select {
+  width: 100%;
+  padding: 0 36px 0 12px;
+  color: var(--text);
+  background-color: rgba(0, 0, 0, 0.18);
+}
+
+.site-credits {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  color: var(--text-soft);
+  font-size: 13px;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.site-credits:hover,
+.site-credits:focus-visible {
+  color: var(--text);
+  outline: none;
+}
+
+.hm-mark {
+  width: auto;
+  height: 18px;
+  opacity: 0.76;
+}
+
+/* =================================
+   LAYOUT
+================================= */
+.page {
+  width: min(100%, var(--max-page));
+  margin: 24px auto 0;
+  padding: 0 clamp(14px, 3vw, 32px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(330px, 400px);
+  gap: clamp(18px, 2.4vw, 28px);
+  align-items: start;
+}
+
+.main-left,
+.main-right {
   min-width: 0;
 }
 
 .main-left {
-  flex: 1;
-  /* låt dokumentet skrolla, inte vänsterspalten */
+  width: 100%;
 }
 
 .main-right {
   position: sticky;
-  top: calc(var(--header-h) + 8px);
-  height: calc(100vh - var(--header-h) - 8px); /* exakt viewportyta under headern */
-  flex: 0 0 clamp(360px, 46vw, 560px);
-  box-sizing: border-box;
+  top: calc(var(--header-h) + 16px);
+  height: calc(100vh - var(--header-h) - 28px);
+  margin-bottom: 24px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 
+.right-inner {
+  width: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  padding-left: 10px;
-  margin: 10px 0;
-
-  /* En enda scroll i kolumnen */
-  overflow-y: auto;
-  overflow-x: hidden;   /* valfritt – hindra sidleds-bleed */
+  background: linear-gradient(150deg, rgba(9, 21, 17, 0.92), rgba(5, 13, 10, 0.82));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
 }
 
-/* Enradslayout – papperskorgen alltid längst till höger */
-.food-list-item{ display:flex; align-items:center; gap:10px; flex-wrap:nowrap; }
-.food-list-item > *{ min-width:0; }
-.quantity-slider{ flex:1 1 160px; min-width:120px; }
-.quantity-input{ flex:0 0 55px; }
-.food-amount{ flex:1 1 140px; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.adjust-button.remove{ margin-left:auto; flex:0 0 auto; }
-
-.food-card {
-  scroll-margin-top: 185px; 
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  padding: 10px;
-  margin: 10px 0;
-  max-width: 100%;
+/* =================================
+   SEARCH
+================================= */
+.empty-state {
+  padding: clamp(22px, 4vw, 34px);
+  color: var(--text-muted);
+  background: linear-gradient(150deg, rgba(14, 28, 23, 0.88), rgba(6, 15, 12, 0.8));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
 }
 
-input[type="number"] {
-  width: 50px;
-  margin-left: 10px;
+.empty-state h2 {
+  margin-bottom: 8px;
+  color: var(--text);
+  font-size: clamp(22px, 3vw, 30px);
+  letter-spacing: 0;
 }
 
-.food-list {
-  background-color: #f0f0f0;
-  background-size: cover;
-  background-repeat: no-repeat;
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin: 10px 0;
+.empty-state p {
+  max-width: 720px;
+  margin-bottom: 0;
 }
 
-#foodList {
-  list-style-type: none;
-  padding: 0;
-}
-
-#foodList li {
-  margin-bottom: 12px;
-}
-
-.food-amount.as-link {
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
-  font-size: 14px;
-  font-weight: 400;   /* normal text */
-  color: #222;        /* standardfärg */
-  cursor: pointer;
-  text-align: left;
-}
-
-.food-amount.as-link:hover,
-.food-amount.as-link:focus {
-  font-weight: 500;   /* lite boldare vid hover/fokus */
-  text-decoration: none;
-  background: none;
-}
-
-.adjust-button {
-  padding: 4px 8px;
-  border-radius: 4px;
-  background-color: #eee;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.adjust-button:hover {
-  background-color: #ddd;
-}
-
-#summary {
-  padding: 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
-}
-
-/* ersätt denna */
-h3 {
-  margin: 0;
-  /* var: font-size: 25px; */
-  font-size: clamp(18px, 2.4vw, 25px);  /* krymper på mobil */
-  line-height: 1.25;
-}
-
-
-[hidden] { display: none !important; }
-
-/* Overlay – placera innehållet med flex + padding */
-.modal{
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  background: rgba(0,0,0,.45);
-  display: none;
-
-  /* Nyckeln: flex + padding istället för margin på .modal-content */
-  align-items: flex-start;        /* startar under toppen */
-  justify-content: center;        /* centrera horisontellt */
-  padding: var(--modal-top) 12px var(--modal-bottom);
-
-  overflow: auto;                 /* om innehåll blir högt */
-  -webkit-overflow-scrolling: touch;
-}
-
-.modal.open { display: flex; }
-
-/* Stabil viewport-höjd där det stöds */
-@supports (height: 100dvh){
-  .modal{ min-height: 100dvh; }
-}
-
-/* Själva rutan */
-.modal-content{
-  background-color: #fff;
-  width: 87%;
-  max-width: 600px;
-  border-radius: 12px;
-  padding: 20px;
-  margin: 0 !important; 
-}
-
-/* På små skärmar: ännu lite längre ner och lite sidomarginal */
-@media (max-width: 520px) {
-  .modal-content {
-    margin: 24vh 12px max(7vh, env(safe-area-inset-bottom)); /* ⬅ 24vh på topp */
-  }
-}
-
-/* Modernare viewport-enheter om de finns */
-@supports (height: 100svh) {
-  .modal-content { margin: 14svh auto 6svh; }
-}
-
-/* Luft före knappen i modalen */
-.modal-actions { margin-top: 12px; }
-
-
-/* Gör modalknappen lätt att träffa på små skärmar */
-@media (max-width: 520px) {
-  #modalAddBtn {
-    width: 100%;
-    display: block;
-    padding: 12px 14px;
-    border-radius: 10px;
-    font-size: 16px;
-  }
-}
-
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-}
-.close:hover {
-  color: #000;
-}
-
-/* Sökfältet */
-#foodInput {
-  display: block;
-  width: 100%;
-  max-width: 100%;     /* låt .search-row sätta taket */
-  box-sizing: border-box;
-  padding: 12px 44px 12px 16px; /* extra höger-padding för krysset */
-  font-size: 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  background: #fff;
-  color: #222;
-  box-shadow: 0 2px 8px rgba(0,0,0,.12);
-  outline: none;
-  transition: box-shadow .2s ease, border-color .2s ease;
-}
-
-#foodInput::placeholder { color:#666; }
-#foodInput:focus {
-  border-color: var(--color-teal);
-  box-shadow: 0 0 0 3px rgba(0,128,128,.22);
-}
-
-/* Rad runt input + kryss så krysset kan positioneras rätt */
-.search-row {
-  position: relative;
-  max-width: 680px;
-  width: 100%;
-}
-
-/* Säkerställ att input fyller raden */
-.search-row #foodInput {
-  width: 100%;
-  max-width: 100%;
-}
-
-
-/* Clear-knapp (×) inne i sökrutan – positioneras relativt .search-row */
-.search-row .clear-btn {
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
+.empty-divider {
   border: 0;
-  background: transparent;
-  color: #888;
-  cursor: pointer;  /* hand-pekare */
-  padding: 0;
-  line-height: 1;
+  border-top: 1px solid rgba(221, 244, 222, 0.12);
+  margin: 18px 0 12px;
 }
 
-/* Hindra globala knappstilar från att “färga” krysset */
-.search-row .clear-btn,
-.search-row .clear-btn:hover,
-.search-row .clear-btn:focus,
-.search-row .clear-btn:active {
-  background: transparent !important;
-  box-shadow: none !important;
-  border: 0 !important;
-  transform: translateY(-50%) !important;
-  color: inherit;
+.source-note,
+.site-disclaimer {
+  color: var(--text-soft);
+  font-size: 13px;
 }
 
-button:not(.clear-btn), .adjust-button, .add-button, #clearListButton{
-  background-color: var(--color-teal);
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
+.source-note a {
+  color: var(--accent-strong);
+  text-decoration: none;
 }
 
-button:not(.clear-btn):hover{
-  background-color: var(--color-teal-dark);
-  transform: scale(1.03);
+.source-note a:hover {
+  text-decoration: underline;
 }
 
-.adjust-button.remove {
-  margin-left: auto;           /* skjuter den till höger */
-  flex: 0 0 auto;
-  background: transparent;
-  border: none;
-  color: #cc3333;
-  font-size: 20px;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.adjust-button.remove:hover {
-  color: #a62828;
-}
-
-/* === Mobile (telefoner & små tablets) === */
-@media (max-width: 768px) {
-  /* gör höjden globalt tillgänglig */
-  :root { --drawer-h: 56px; }
-
-  /* ge plats så sista knappen inte hamnar bakom handtaget */
-  #nutritionOutput {
-    padding-bottom: calc(var(--drawer-h) + env(safe-area-inset-bottom) + 16px);
-  }
-
-  /* se till att IO-sentineln hamnar ovanför handtaget */
-  #resultsSentinel {
-    margin-bottom: calc(var(--drawer-h) + env(safe-area-inset-bottom) + 12px);
-  }
-}
-
-.food-card .loading {
+.site-disclaimer {
+  margin-top: 6px;
   font-style: italic;
 }
 
-/* Highlight av exakt träff */
-.food-card.highlight {
-  background: #fff7d1;          /* mild gul */
-  box-shadow: 0 0 0 2px #ffd24d inset;
-  transition: background-color .4s ease;
-}
-
-.food-list-item {
+.results-header {
   display: flex;
-  align-items: center;
-  margin-bottom: 12px;
-  gap: 10px;
-  flex-wrap: nowrap; 
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 14px;
 }
 
-/* Viktigt: låt flex-barn få krympa */
-.food-list-item > * { min-width: 0; }
-
-.quantity-slider {
-  flex: 1 1 160px;             /* växer, krymper, start-bredd */
-  min-width: 120px;
-  accent-color: teal;
-
+.results-header h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(22px, 2.6vw, 30px);
+  letter-spacing: 0;
 }
 
-.quantity-input {
-  flex: 0 0 55px;
-  width: 90px;
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+.results-count {
+  color: var(--text-muted);
   font-size: 14px;
 }
 
-.food-amount {
-  flex: 1 1 140px;
-  min-width: 0;                /* ⬅️ nyckeln för att få krympa i flex */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 150px;
+.loadmore-bar {
+  display: flex;
+  justify-content: center;
+  padding: 18px 0 26px;
 }
 
-/* === Modal: mängdkontroller === */
-.modal-qty {
+#loadMoreBtn {
+  padding: 0 24px;
+  font-weight: 800;
+  background: linear-gradient(135deg, rgba(115, 200, 62, 0.28), rgba(31, 95, 52, 0.36));
+  border-color: var(--border-strong);
+}
+
+#loadMoreBtn:hover,
+#loadMoreBtn:focus-visible {
+  box-shadow: 0 0 0 3px rgba(115, 200, 62, 0.14);
+  outline: none;
+}
+
+/* =================================
+   FILTERING
+================================= */
+.food-card.highlight {
+  border-color: rgba(245, 182, 29, 0.72);
+  box-shadow: 0 0 0 2px rgba(245, 182, 29, 0.18), var(--shadow-soft);
+}
+
+/* =================================
+   RESULT CARDS
+================================= */
+#resultsCards {
   display: grid;
-  grid-template-columns: auto max-content 1fr; /* Label | Number | Slider */
-  grid-template-areas: "label number slider";
-  align-items: center;
-  column-gap: 8px;      /* tajtare mellan label och fält */
-  row-gap: 10px;
-  margin: 10px 0 16px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
 }
 
-.modal-qty > label {
-  grid-area: label;
+.food-card {
+  min-width: 0;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--text);
+  background: linear-gradient(160deg, rgba(13, 28, 23, 0.94), rgba(5, 13, 10, 0.9));
+  border: 1px solid rgba(221, 244, 222, 0.15);
+  border-radius: var(--radius);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+  cursor: pointer;
+  scroll-margin-top: calc(var(--header-h) + 18px);
+  transition: transform 0.16s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.food-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(143, 227, 90, 0.38);
+  box-shadow: var(--shadow);
+}
+
+.food-card:active {
+  transform: translateY(0);
+}
+
+.food-card:focus {
+  outline: none;
+}
+
+.food-card:focus-visible {
+  border-color: rgba(143, 227, 90, 0.68);
+  box-shadow: 0 0 0 3px rgba(115, 200, 62, 0.18), var(--shadow-soft);
+}
+
+.food-visual {
+  position: relative;
+  min-height: 132px;
+  aspect-ratio: 16 / 10;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 38% 24%, rgba(255, 255, 255, 0.18), transparent 0 18%, transparent 34%),
+    linear-gradient(135deg, rgba(72, 132, 58, 0.48), rgba(6, 17, 13, 0.94));
+}
+
+.food-visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.36) 100%),
+    radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.12), transparent 34%);
+}
+
+.food-visual img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.food-visual-icon {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 30px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.2);
+}
+
+.food-visual-label {
+  position: absolute;
+  right: 10px;
+  bottom: 9px;
+  padding: 4px 8px;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 12px;
+  font-weight: 800;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius);
+}
+
+.food-visual--eggs {
+  background: linear-gradient(135deg, #495348, #111a14 58%, #090d0a);
+}
+
+.food-visual--chicken,
+.food-visual--meat {
+  background: linear-gradient(135deg, #7a533c, #182015 62%, #080d09);
+}
+
+.food-visual--fish {
+  background: linear-gradient(135deg, #257b84, #0d1b19 62%, #060b0a);
+}
+
+.food-visual--vegetables,
+.food-visual--fruit {
+  background: linear-gradient(135deg, #5e9f31, #0d2014 62%, #050c08);
+}
+
+.food-visual--nuts,
+.food-visual--grain {
+  background: linear-gradient(135deg, #8d6638, #1a1810 62%, #080805);
+}
+
+.food-visual--dairy {
+  background: linear-gradient(135deg, #7d9387, #14201d 62%, #070c0a);
+}
+
+.food-visual--oils {
+  background: linear-gradient(135deg, #9f7f18, #172014 62%, #070b08);
+}
+
+.food-visual--loading {
+  background: linear-gradient(100deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.06));
+  background-size: 220% 100%;
+  animation: shimmer 1.25s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
+}
+
+.food-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 15px 16px 16px;
+}
+
+.food-card-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+}
+
+.food-card h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+.per100 {
+  color: var(--text-soft);
+  font-size: 0.74em;
   font-weight: 600;
   white-space: nowrap;
 }
 
-.modal-qty .quantity-input {
-  grid-area: number;
-  width: 120px;
-  min-width: 120px;
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
-  box-sizing: border-box;
+.energy-pill {
+  align-self: start;
+  padding: 5px 8px;
+  color: #eafce4;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+  background: rgba(115, 200, 62, 0.22);
+  border: 1px solid rgba(143, 227, 90, 0.23);
+  border-radius: var(--radius);
 }
 
-.modal-qty .quantity-slider {
-  grid-area: slider;
-  width: 100%;
-  display: block;
-  accent-color: teal;
-  flex: unset !important; /* neutralisera ev. global flex från listan */
+.food-group {
+  min-height: 20px;
+  margin: 7px 0 13px;
+  color: var(--text-soft);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Små skärmar: label + fält på rad, slider på egen rad under */
-@media (max-width: 520px) {
-  .modal-qty {
-    grid-template-columns: auto 1fr;
-    grid-template-areas:
-      "label number"
-      "slider slider";
-    column-gap: 8px;
-    row-gap: 8px;
-  }
-  .modal-qty .quantity-input {
-    width: 30%;     /* fyll kolumnen på små skärmar */
-    min-width: 0;
-  }
+.macro-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: auto 0 0;
 }
 
-#summary {
-  background: #f5f5f5;
-  padding: 10px;
-  border: 1px solid #ddd;
-  flex-shrink: 0;
+.macro-grid div {
+  min-width: 0;
 }
 
-#summary p {
-  font-size: clamp(14px, 1.9vw, 16px);
-  line-height: 1.35;
+.macro-grid dt {
+  margin-bottom: 2px;
+  color: var(--text-soft);
+  font-size: 12px;
 }
 
-/* --- Desktop layout --- */
-.page {
-  width: 100%;
+.macro-grid dd {
+  margin: 0;
+  color: var(--text);
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.food-card .loading {
+  margin: 10px 0 0;
+  color: var(--text-soft);
+  font-style: italic;
+}
+
+.food-card .extras {
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  box-sizing: border-box;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 13px;
 }
 
-.main-left {
-  flex: 1;
-  overflow-y: auto;
+.food-card .chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 4px 8px;
+  color: rgba(237, 245, 235, 0.78);
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(221, 244, 222, 0.11);
+  border-radius: var(--radius);
 }
 
-/* rubrik/toolbar för listan, ligger utanför listans scroll */
-.sidebar-header{
-  position: sticky;     /* sitter fast i högerkolumnens/drawerns topp */
-  top: 0;               /* i drawern funkar detta också */
+/* =================================
+   SIDEBAR
+================================= */
+.sidebar-header {
+  position: sticky;
+  top: 0;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px;
-  background: #eee;     /* samma/fungerande bakgrund */
-  border: 1px solid #ccc;
-  border-bottom: none;  /* så den “smälter ihop” med boxen nedan */
+  padding: 18px 18px 14px;
+  background: rgba(7, 17, 13, 0.94);
+  border-bottom: 1px solid var(--border);
 }
 
-.right-inner{
-  position: static;
-  display:flex;
-  flex-direction:column;
-  width:100%;
-  min-height:0;   /* viktigt för att barn ska få krympa */
-  height:auto;    /* låt innehållet styra (din önskan) */
+.sidebar-header h3,
+#summary h3 {
+  color: var(--text);
+  font-size: 20px;
 }
 
-/* Listan ska inte ha egen scroll eller maxhöjd */
+#clearListButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 13px;
+  color: var(--text);
+  font-weight: 800;
+  white-space: nowrap;
+  background: linear-gradient(135deg, rgba(115, 200, 62, 0.22), rgba(31, 95, 52, 0.28));
+  border-color: rgba(143, 227, 90, 0.26);
+}
+
+#clearListButton:hover,
+#clearListButton:focus-visible {
+  border-color: rgba(143, 227, 90, 0.54);
+  box-shadow: 0 0 0 3px rgba(115, 200, 62, 0.12);
+  outline: none;
+}
+
+.food-list {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
 #selectedFoodsList {
   overflow-y: auto;
-  overflow-x: hidden;          /* ⬅️ inga horisontella scrollbars */
-  overflow: visible;
+  overflow-x: hidden;
   max-height: none;
 }
 
-/* ta bort listboxens “dubbla” paddning om du hade den där */
-#selectedFoodsList > ul{
+#selectedFoodsList > ul,
+#foodList {
   margin: 0;
-  padding: 10px;
+  padding: 12px 14px 4px;
+  list-style: none;
 }
 
+.food-list-item {
+  display: grid;
+  grid-template-columns: minmax(86px, 1fr) 62px minmax(92px, 1.05fr) 34px;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(221, 244, 222, 0.1);
+}
 
-/* === Mobil: aktivera drawer & dölja desktop-högerkolumn === */
-/* Behåll drawer-lagret fast i botten */
+.food-list-item > * {
+  min-width: 0;
+}
+
+.quantity-slider {
+  width: 100%;
+  min-width: 0;
+  accent-color: var(--accent);
+}
+
+.quantity-input,
+input[type="number"] {
+  width: 62px;
+  min-width: 0;
+  padding: 7px 8px;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(221, 244, 222, 0.16);
+  border-radius: var(--radius);
+  outline: none;
+}
+
+.quantity-input:focus {
+  border-color: rgba(143, 227, 90, 0.6);
+  box-shadow: 0 0 0 3px rgba(115, 200, 62, 0.14);
+}
+
+.food-amount.as-link {
+  width: 100%;
+  display: grid;
+  gap: 1px;
+  padding: 0;
+  color: var(--text);
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.food-amount.as-link:hover .name,
+.food-amount.as-link:focus-visible .name {
+  color: var(--accent-strong);
+}
+
+.food-amount.as-link:focus-visible {
+  outline: 2px solid rgba(143, 227, 90, 0.48);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.food-amount .qty {
+  color: var(--text-soft);
+  font-size: 12px;
+}
+
+.food-amount .name {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.14s ease;
+}
+
+.adjust-button.remove {
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: rgba(255, 107, 95, 0.92);
+  background: rgba(255, 107, 95, 0.08);
+  border-color: rgba(255, 107, 95, 0.18);
+}
+
+.adjust-button.remove:hover,
+.adjust-button.remove:focus-visible {
+  color: #fff;
+  background: rgba(255, 107, 95, 0.18);
+  outline: none;
+}
+
+#summary {
+  flex-shrink: 0;
+  padding: 17px 18px 18px;
+  background: rgba(255, 255, 255, 0.028);
+  border-top: 1px solid var(--border);
+}
+
+#summary h3 {
+  margin-bottom: 14px;
+}
+
+#summary p {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 9px;
+  padding: 10px 11px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.32;
+  background: rgba(0, 0, 0, 0.16);
+  border: 1px solid rgba(221, 244, 222, 0.1);
+  border-radius: var(--radius);
+}
+
+#summary p:last-child {
+  margin-bottom: 0;
+}
+
+#summary p strong {
+  color: var(--text);
+  font-size: 16px;
+}
+
+.summary-meta {
+  color: rgba(219, 236, 223, 0.68) !important;
+}
+
+/* =================================
+   DRAWER
+================================= */
 .mobile-drawer {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 108;           /* under modal (200), över sidan */
-  display: none;          /* aktiveras i media query */
-  pointer-events: none;   /* låt barnen styra */
-}
-.mobile-drawer * { pointer-events: auto; } /* återställ för inre element */
-
-/* === Mobile drawer (telefoner & små tablets) === */
-@media (max-width: 768px) and (orientation: portrait) {
-  /* Desktop-högerspalten döljs på mobil; vi använder drawer istället */
-  .page { display: block; }
-  .main-right { display: none; }
-
-  /* Visa drawer-lager */
-  .mobile-drawer { display: block; --drawer-h: 56px; }
-
-  /* Handtaget syns alltid längst ner när lådan är stängd */
-  .drawer-handle {
-    display: flex;
-    position: fixed;
-    left: 0; right: 0;
-    bottom: max(0px, env(safe-area-inset-bottom));
-    z-index: 110;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    min-height: var(--drawer-h);
-    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-    background: #008080;
-    color: #fff;
-    border-top: 1px solid #006666;
-    box-shadow: 0 -2px 8px rgba(0,0,0,.06);
-    font-weight: 700;
-    font-size: 16px;
-    transform: translateZ(0);
-  }
-  .drawer-handle .chev { transition: transform .2s ease; }
-
-  /* Panelen glider upp från botten */
-  .drawer-content {
-    position: fixed;
-    left: 0; right: 0; bottom: 0;
-    z-index: 109;
-    background: #fafafa;
-    border-top: 1px solid #ddd;
-    box-shadow: 0 -8px 24px rgba(0,0,0,.15);
-    transform: translateY(100%);      /* dold som default */
-    transition: transform .25s ease;
-    max-height: 75vh;
-    overflow: hidden;                  /* bara listan scrollar */
-    padding: 12px 12px max(16px, env(safe-area-inset-bottom));
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    will-change: transform;
-  }
-
-  /* När lådan är öppen: panelen upp och lite extra botten-padding
-     så att sista raden i summering inte hamnar bakom knappen */
-  .mobile-drawer.open .drawer-content {
-    transform: translateY(0);
-    padding-bottom: calc(var(--drawer-h) + env(safe-area-inset-bottom) + 12px);
-  }
-  .mobile-drawer.open .drawer-handle {
-    position: sticky;
-    top: 0;
-    bottom: auto;
-    border-top: none;
-    border-bottom: 1px solid #006666;
-    box-shadow: 0 2px 6px rgba(0,0,0,.08);
-  }
-  .mobile-drawer.open .drawer-handle .chev { transform: rotate(180deg); }
-
-  /* Drawer-innehåll */
-  .drawer-content .food-list { margin: 0; border-left: 0; border-right: 0; }
-
-  /* Börja scrolla redan efter ~2 rader, men gå aldrig över paneltaket */
-  .drawer-content #selectedFoodsList {
-    overflow-y: auto;
-    max-height: min(150px, calc(75vh - 200px));
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .drawer-content #summary { border-top: 1px solid #e3e3e3; }
-
-  /* Kompaktare UI för mobil */
-.drawer-content h3,
-.sidebar-header h3,
-#summary h3 {
-  font-size: clamp(18px, 2.4vw, 24px);
-}
-  .quantity-input { font-size: 13px; padding: 6px 5px; max-width: 100%; box-sizing: border-box; }
-  .food-list-item { gap: 8px; }
-  button, .add-button, #clearListButton {
-    padding: 7px 12px;
-    border-radius: 8px;
-    font-size: 14px;
-  }
-
-  .mobile-drawer .drawer-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.15);
-  opacity: 0;
-  pointer-events: none;   /* inaktiv när stängd */
-  transition: opacity .2s ease;
-  z-index: 108;           /* under .drawer-content (109), över sidan */
-  }
-  .mobile-drawer.open .drawer-backdrop {
-    opacity: 1;
-    pointer-events: auto;   /* fånga klick när öppen */
-  }
-
-  /* Förhindra sidscroll vågrätt */
-  #foodList,
-  .food-list-item,
-  .food-amount,
-  .quantity-slider,
-  .quantity-input {
-    max-width: 100%;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  .food-list-item { flex-wrap: wrap; }
-  .food-amount { min-width: 0; }
+  z-index: 108;
+  display: none;
+  pointer-events: none;
 }
 
-/* Liggande telefon: kör desktop-lik layout, ingen drawer */
-@media (max-width: 768px) and (orientation: landscape) {
-  .page { display: flex; }
-  .main-right { display: block; }   /* visa högerkolumnen */
-  .mobile-drawer { display: none; } /* dölj handtag/panel */
-}
-.per100 {
-  font-weight: normal;
-  font-size: 0.6em;
-  color: #666;
-}
-
-.site-credits{
-  display:inline-block;
-  margin: 2px 0 12px 0;
-  font-size: clamp(12px, 1.8vw, 14px);
-  color: var(--text-on-slate-dim);
-  text-decoration: none;           /* ingen underline */
-  transition: color .15s ease;     /* mjukare hover */
-}
-.site-credits:hover,
-.site-credits:focus{
-  color: #fff;
-  text-decoration: none;
-}
-
-/* === Kompaktare produktkort på mobil === */
-@media (max-width: 520px){
-  /* Själva kortet */
-  .food-card{
-    padding: 8px;
-    margin: 8px 0;
-  }
-
-  /* Rubrik + (per 100 g) */
-  .food-card h3{
-    font-size: 18px;
-    line-height: 1.25;
-    margin: 0 0 6px 0;
-  }
-  .food-card h3 .per100{
-    font-size: .65em; /* lite mindre än tidigare */
-  }
-
-  /* Text-rader (Energi, Kolhydrater, osv.) */
-  .food-card p{
-    font-size: 13.5px;
-    line-height: 1.35;
-    margin: 4px 0;
-  }
-
-  /* “Lägg till”-knappen i kortet */
-  .food-card .add-button{
-    font-size: 13px;
-    padding: 7px 10px;
-    border-radius: 7px;
-  }
-}
-
-/* Kortet blir tydligt klickbart */
-.food-card { cursor: pointer; transition: box-shadow .15s ease; }
-.food-card:hover { box-shadow: 0 2px 10px rgba(0,0,0,.06); }
-.food-card:focus { outline: 3px solid rgba(0,128,128,.35); outline-offset: 2px; }
-
-/* Kortet ska kännas klickbart */
-.food-card {
-  cursor: pointer;
-  transition: box-shadow .15s ease, transform .05s ease;
-}
-.food-card:hover {
-  box-shadow: 0 2px 12px rgba(0,0,0,.12);
-  transform: translateY(-1px);
-}
-.food-card:active { transform: translateY(0); }
-.food-card:focus { outline: none; }
-.food-card:focus-visible {
-  box-shadow: 0 0 0 3px rgba(0,128,128,.35);
-}
-
-/* Modalens knapp – fullbredd på mobil */
-#modalAddBtn { margin-top: 10px; }
-@media (max-width: 768px) {
-  #modalAddBtn {
-    display: block;
-    width: 100%;
-    padding: 14px 16px;
-    font-size: 16px;
-    border-radius: 12px;
-  }
-}
-
-/* Gör filterlableln ljus på mörk header */
-.header-top .diet-filter label{
-  color: var(--text-on-slate);   /* vit */
-  font-weight: 600;
-  opacity: .95;
-}
-
-/* Stil på selecten – ljus pillerlook */
-.header-top .diet-filter select{
-  background: #fff;
-  color: #111;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 6px 10px;
-  box-shadow: 0 1px 3px rgba(0,0,0,.08);
-}
-
-.diet-filter{
-  display:flex; align-items:center; gap:8px;
-  margin:6px 0 8px;
-}
-@media (max-width:520px){
-  .diet-filter{ flex-wrap:wrap; font-size:14px; }
-  .diet-filter select{ width:100%; }
-}
-
-.empty-state{
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-  padding:20px;
-  margin:12px 0;
-  box-shadow:0 2px 10px rgba(0,0,0,.04);
-}
-.empty-state h2{
-  margin:0 0 6px 0;
-  font-size:clamp(18px,2.4vw,22px);
-}
-.empty-state p{
-  margin:0;
-  color:#444;
-}
-
-.food-card .extras{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  margin-top:6px;
-}
-.food-card .chip{
-  display:inline-block;
-  padding:3px 8px;
-  border:1px solid #e5e7eb;
-  border-radius:9999px;
-  background:#eef6f6;
-  font-size:12px;
-  line-height:1.2;
-  white-space:nowrap;
-}
-@media (max-width:520px){
-  .food-card .chip{ font-size:11.5px; }
-}
-
-/* Modalens huvudlista (kärnvärden) */
-#modalCalcList.modal-main li {
-  font-size: 1rem;
-  line-height: 1.4;
-}
-
-/* Infällbart block för extra-värden */
-.nutr-extras {
-  margin-top: 6px;
-}
-.nutr-extras summary {
-  cursor: pointer;
-  font-size: 0.95rem;
-  opacity: 0.8;
-}
-.modal-extras {
-  list-style: none;
-  padding-left: 0;
-  margin: 6px 0 0;
-}
-.modal-extras li.extra {
-  opacity: 0.75;                /* nedtonat */
-  font-size: 0.95rem;           /* lite mindre text */
-}
-.modal-extras li.extra strong {
-  font-weight: 600;
-}
-
-.source-note{
-  font-size: 13px;
-  color: #555;
-  line-height: 1.45;
-}
-.source-note a{ color: #006d6d; text-decoration: none; }
-.source-note a:hover{ text-decoration: underline; }
-
-/* Neutral länk-stil för extern knapp */
-.btn-secondary.external {
-  display: inline-block;
-  margin-left: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #006d6d;             /* teal-ton, samma accent som sidan */
-  text-decoration: none;
-  background: transparent;    /* ingen bakgrund */
-  border: none;               /* ingen kant */
-  padding: 0;                 /* ingen extra padding */
-  cursor: pointer;
-}
-
-.btn-secondary.external:hover {
-  text-decoration: underline;
-  color: #004f4f;             /* mörkare teal vid hover */
-}
-
-.modal-source {
-  margin-top: 6px;
-  font-size: 12px;       /* mindre text */
-  color: #666;           /* nedtonad grå */
-  line-height: 1.4;
-  text-align: right;     /* valfritt: högerställ för diskret placering */
+.mobile-drawer * {
+  pointer-events: auto;
 }
 
 .drawer-label {
   display: flex;
   align-items: center;
-  gap: 6px;              /* lite luft mellan text och räknare */
+  gap: 6px;
 }
 
 .drawer-count {
+  color: rgba(255, 255, 255, 0.82);
   font-size: 0.85em;
-  font-weight: 500;
-  color: rgba(255,255,255,0.85); /* diskret vit/grå */
+  font-weight: 600;
 }
 
-.site-disclaimer {
-  font-size: 0.85em;
-  color: #666;
-  margin-top: 4px;
-  font-style: italic;
+/* =================================
+   MODAL
+================================= */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--modal-top) 12px var(--modal-bottom);
+  overflow: auto;
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(8px);
+  -webkit-overflow-scrolling: touch;
 }
 
-/* --- iOS: förhindra att texten i mobilen-drawern behåller landskapsstorlek --- */
+.modal.open {
+  display: flex;
+}
+
+@supports (height: 100dvh) {
+  .modal {
+    min-height: 100dvh;
+  }
+}
+
+.modal-content {
+  position: relative;
+  width: min(92vw, 620px);
+  margin: 0 !important;
+  padding: 24px;
+  color: var(--text);
+  background: linear-gradient(155deg, rgba(13, 27, 22, 0.98), rgba(5, 13, 10, 0.98));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: rgba(237, 245, 235, 0.72);
+  font-size: 25px;
+  line-height: 1;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(221, 244, 222, 0.1);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus-visible {
+  color: var(--text);
+  border-color: rgba(143, 227, 90, 0.38);
+  outline: none;
+}
+
+#modalBody h2 {
+  margin: 0 42px 8px 0;
+  font-size: clamp(24px, 4vw, 32px);
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+#modalBody p {
+  color: var(--text-muted);
+}
+
+#modalBody .per100 {
+  display: block;
+  margin: 10px 0 16px;
+  color: var(--text-soft);
+  white-space: normal;
+}
+
+.modal-section-title {
+  margin-top: 14px;
+}
+
+#modalCalcList.modal-main {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding-left: 0;
+  margin: 8px 0 0;
+  list-style: none;
+}
+
+#modalCalcList.modal-main li,
+.modal-extras li.extra {
+  padding: 10px 11px;
+  color: var(--text-muted);
+  background: rgba(0, 0, 0, 0.16);
+  border: 1px solid rgba(221, 244, 222, 0.1);
+  border-radius: var(--radius);
+}
+
+#modalCalcList.modal-main strong,
+.modal-extras li.extra strong {
+  color: var(--text);
+}
+
+.nutr-extras {
+  margin-top: 8px;
+}
+
+.nutr-extras summary {
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.modal-extras {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding-left: 0;
+  margin: 8px 0 0;
+  list-style: none;
+}
+
+.modal-qty {
+  display: grid;
+  grid-template-columns: auto 120px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 16px;
+}
+
+.modal-qty > label {
+  color: var(--text-muted);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.modal-qty .quantity-input {
+  width: 120px;
+}
+
+.modal-qty .quantity-slider {
+  width: 100%;
+}
+
+.modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+#modalAddBtn {
+  padding: 0 18px;
+  color: var(--text);
+  font-weight: 900;
+  background: linear-gradient(135deg, rgba(115, 200, 62, 0.42), rgba(31, 95, 52, 0.5));
+  border-color: rgba(143, 227, 90, 0.42);
+}
+
+#modalAddBtn:hover,
+#modalAddBtn:focus-visible {
+  box-shadow: 0 0 0 3px rgba(115, 200, 62, 0.14);
+  outline: none;
+}
+
+.btn-secondary.external {
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.btn-secondary.external:hover,
+.btn-secondary.external:focus-visible {
+  color: var(--accent-strong);
+  outline: none;
+}
+
+.modal-source {
+  margin: 12px 0 0;
+  color: var(--text-soft);
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: right;
+}
+
+/* =================================
+   SEO
+================================= */
+.seo-text {
+  width: min(100% - 28px, 900px);
+  margin: 52px auto 80px;
+  padding-top: 18px;
+  color: var(--text-soft);
+  border-top: 1px solid rgba(221, 244, 222, 0.1);
+}
+
+.seo-text h2 {
+  margin-bottom: 8px;
+  color: var(--text-muted);
+  font-size: clamp(20px, 2.4vw, 26px);
+  letter-spacing: 0;
+}
+
+.seo-text p {
+  color: var(--text-soft);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+/* =================================
+   RESPONSIVE
+================================= */
+@media (max-width: 1100px) {
+  .page {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+  }
+
+  .filter-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .diet-filter {
+    width: min(100%, 360px);
+  }
+}
+
+@media (max-width: 900px) {
+  .brand-row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .header-meta {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .page {
+    grid-template-columns: 1fr;
+  }
+
+  .main-right {
+    position: relative;
+    top: auto;
+    height: auto;
+  }
+}
+
 @media (max-width: 768px) {
-  /* stäng av textinflation just i drawern */
-  .mobile-drawer, .mobile-drawer * {
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
+  :root {
+    --drawer-h: 58px;
+    --modal-top: 11vh;
+    --modal-bottom: max(6vh, env(safe-area-inset-bottom));
   }
-  /* använd fasta rem/px i drawern (ingen vw) */
-  .mobile-drawer #summary p {
-    font-size: 15px !important;
-    line-height: 1.4;
-  }
-  .mobile-drawer .drawer-content h3,
-  .mobile-drawer .sidebar-header h3,
-  .mobile-drawer #summary h3 {
-    font-size: 20px !important;
-    line-height: 1.25;
-  }
-}
 
-/* Mobil (portrait + landscape): auto-hide header, reveal on scroll up */
-@media (max-width: 768px) {
-  .header-top{
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    transform: translateY(0);
-    transition: transform .18s ease;
-    will-change: transform;
+  .header-top {
+    padding: 16px 12px 12px;
   }
-  .header-top.header-hidden{
+
+  .header-top.header-hidden {
     transform: translateY(calc(-1 * var(--header-h)));
   }
-}
 
-/* När headern är gömd på mobil: låt båda spalter börja högst upp */
-@media (max-width: 768px) {
   html.hdr-hidden .main-right {
     top: 8px;
     height: calc(100vh - 8px);
   }
+
+  .brand-row {
+    gap: 12px;
+  }
+
+  .brand-mark {
+    width: 54px;
+    height: 54px;
+  }
+
+  .site-title {
+    font-size: clamp(25px, 8vw, 34px);
+  }
+
+  .site-sub {
+    font-size: 14px;
+  }
+
+  .header-meta {
+    gap: 10px;
+    font-size: 12px;
+    white-space: normal;
+  }
+
+  .search-panel {
+    margin-top: 14px;
+    padding: 12px;
+  }
+
+  #foodInput {
+    height: 54px;
+    font-size: 16px;
+  }
+
+  .quick-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .quick-filters button {
+    justify-content: center;
+    min-width: 0;
+    padding: 9px 10px;
+  }
+
+  .diet-filter {
+    width: 100%;
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  .diet-filter select {
+    min-height: 44px;
+  }
+
+  .page {
+    margin-top: 16px;
+    padding: 0 12px;
+  }
+
+  #resultsCards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .food-card {
+    min-height: 280px;
+  }
+
+  .food-card-body {
+    padding: 12px;
+  }
+
+  .macro-grid {
+    gap: 7px;
+  }
+
+  .macro-grid dd {
+    font-size: 15px;
+  }
+
+  .modal-content {
+    width: min(94vw, 620px);
+    padding: 20px;
+  }
+
+  .modal-qty {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "label number"
+      "slider slider";
+  }
+
+  .modal-qty > label {
+    grid-area: label;
+  }
+
+  .modal-qty .quantity-input {
+    grid-area: number;
+    width: 100%;
+  }
+
+  .modal-qty .quantity-slider {
+    grid-area: slider;
+  }
 }
 
-.quick-filters{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 8px 0 6px;
+@media (max-width: 768px) and (orientation: portrait) {
+  .page {
+    display: block;
+  }
+
+  .main-right {
+    display: none;
+  }
+
+  #nutritionOutput {
+    padding-bottom: calc(var(--drawer-h) + env(safe-area-inset-bottom) + 16px);
+  }
+
+  #resultsSentinel {
+    margin-bottom: calc(var(--drawer-h) + env(safe-area-inset-bottom) + 12px);
+  }
+
+  .mobile-drawer {
+    display: block;
+  }
+
+  .drawer-handle {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: max(0px, env(safe-area-inset-bottom));
+    z-index: 110;
+    min-height: var(--drawer-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    color: var(--text);
+    font-weight: 900;
+    font-size: 16px;
+    background: linear-gradient(135deg, rgba(31, 95, 52, 0.98), rgba(12, 58, 36, 0.98));
+    border-top: 1px solid rgba(143, 227, 90, 0.3);
+    box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.34);
+    border-radius: 0;
+  }
+
+  .drawer-handle .chev {
+    transition: transform 0.2s ease;
+  }
+
+  .drawer-content {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--drawer-h) + env(safe-area-inset-bottom));
+    z-index: 109;
+    max-height: calc(78svh - var(--drawer-h));
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 12px;
+    background: linear-gradient(150deg, rgba(12, 25, 20, 0.98), rgba(5, 13, 10, 0.98));
+    border-top: 1px solid rgba(143, 227, 90, 0.2);
+    border-top-left-radius: var(--radius);
+    border-top-right-radius: var(--radius);
+    box-shadow: 0 -22px 50px rgba(0, 0, 0, 0.48);
+    transform: translateY(100%);
+    transition: transform 0.24s ease;
+    will-change: transform;
+  }
+
+  .mobile-drawer.open .drawer-content {
+    transform: translateY(0);
+  }
+
+  .mobile-drawer.open .drawer-handle .chev {
+    transform: rotate(180deg);
+  }
+
+  .drawer-handle:focus-visible {
+    outline: 2px solid rgba(143, 227, 90, 0.72);
+    outline-offset: -5px;
+  }
+
+  .mobile-drawer .drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 108;
+    background: rgba(0, 0, 0, 0.36);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .mobile-drawer.open .drawer-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .drawer-content .sidebar-header {
+    padding: 8px 4px 12px;
+    background: transparent;
+    border-bottom: 1px solid rgba(221, 244, 222, 0.1);
+  }
+
+  .drawer-content .food-list {
+    margin: 0;
+  }
+
+  .drawer-content #selectedFoodsList {
+    max-height: min(190px, calc(78svh - 280px));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .drawer-content #summary {
+    padding: 14px 4px 0;
+    background: transparent;
+    border-top: 1px solid rgba(221, 244, 222, 0.1);
+  }
+
+  .drawer-content .food-list-item {
+    grid-template-columns: minmax(130px, 1fr) 68px 34px;
+  }
+
+  .drawer-content .quantity-slider {
+    grid-column: 1 / -1;
+  }
+
+  .mobile-drawer,
+  .mobile-drawer * {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
 }
 
-.quick-filters button{
-  background: rgba(255,255,255,.12);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,.25);
-  padding: 6px 12px;
-  border-radius: 9999px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
+@media (max-width: 768px) and (orientation: landscape) {
+  .page {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 320px);
+  }
+
+  .main-right {
+    display: block;
+    position: sticky;
+    top: calc(var(--header-h) + 10px);
+    height: calc(100vh - var(--header-h) - 16px);
+  }
+
+  .mobile-drawer {
+    display: none;
+  }
 }
 
-.quick-filters button:hover{
-  background: var(--color-teal);
-  border-color: var(--color-teal);
-}
+@media (max-width: 560px) {
+  .brand-row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
 
-.site-home-link {
-  color: inherit;
-  text-decoration: none;
-}
+  .header-meta {
+    display: none;
+  }
 
-.quick-filters button.is-active {
-  background: var(--color-teal);
-  border-color: var(--color-teal);
-  color: #fff;
-  box-shadow: 0 0 0 2px rgba(0,128,128,.35);
-}
-.seo-text {
-  max-width: 900px;
-  margin: 60px auto 80px;
-  padding: 16px;
-  border-top: 1px solid #e5e7eb;
-  color: #555;
-}
+  .quick-filters {
+    grid-template-columns: 1fr 1fr;
+  }
 
-.seo-text h2 {
-  font-size: clamp(20px, 2.6vw, 26px);
-  margin-bottom: 8px;
-}
+  #resultsCards {
+    grid-template-columns: 1fr;
+  }
 
-.seo-text p {
-  line-height: 1.6;
-  font-size: 15px;
-  color: #555;
-}
+  .food-card {
+    min-height: 0;
+  }
 
-.hm-mark{
-  height: 22px;   /* diskret */
-  width: auto;
-  vertical-align: bottom;
-  margin-top: 6px;
-  transition: opacity .15s ease;
-}
+  .food-visual {
+    min-height: 150px;
+  }
 
-@media (max-width: 520px){
-  .hm-mark{
-    height: 18px;
+  .results-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  #modalCalcList.modal-main,
+  .modal-extras {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  #modalAddBtn {
+    width: 100%;
+  }
+
+  .seo-text {
+    margin-bottom: 72px;
   }
 }

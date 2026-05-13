@@ -1,12 +1,15 @@
+// =================================
+// GLOBAL STATE
+// =================================
+
 //const url = "https://dataportal.livsmedelsverket.se/livsmedel/api/v1/livsmedel?offset=0&limit=2569&sprak=1";
 const foodList = document.getElementById("foodList");
 const nutritionOutput = document.getElementById("nutritionOutput");
 const searchInput = document.getElementById("foodInput");
 const DEFAULT_SLIDER_MAX = 1000;
- // Drawer-element
- const mobileDrawer = document.getElementById("mobileDrawer");
- const drawerHandle = document.getElementById("drawerHandle");
- const drawerContent = document.getElementById("drawerContent");
+const mobileDrawer = document.getElementById("mobileDrawer");
+const drawerHandle = document.getElementById("drawerHandle");
+const drawerContent = document.getElementById("drawerContent");
 // Backdrop för klick-utanför-stäng
 const drawerBackdrop = mobileDrawer?.querySelector(".drawer-backdrop");
 drawerBackdrop?.addEventListener("click", () => {
@@ -105,13 +108,17 @@ function lvFoodUrl(id) {
   return `https://soknaringsinnehall.livsmedelsverket.se/Home/FoodDetails/${id}`;
 }
 
+// =================================
+// EMPTY STATES
+// =================================
+
 function showEmptyState() {
   nutritionOutput.innerHTML = `
     <div id="emptyState" class="empty-state">
       <h2>Välkommen till Kostplaneraren</h2>
       <p>Skriv i sökfältet ovan för att börja. Exempel: <em>ägg</em>, <em>kyckling</em>, <em>broccoli</em>.</p>
 
-      <hr style="border:none; border-top:1px solid #eef1f1; margin:14px 0 10px;">
+      <hr class="empty-divider">
 
       <p class="source-note">
         <strong>Källa:</strong>
@@ -144,6 +151,10 @@ function clearEmptyStates() {
   // ta bort både välkomst-rutan och "inga träffar"-rutan
   document.querySelectorAll('.empty-state').forEach(el => el.remove());
 }
+
+// =================================
+// FILTERING
+// =================================
 
 const dietSelect = document.getElementById('dietSelect');
 dietSelect?.addEventListener('change', () => {
@@ -187,6 +198,10 @@ function unlockTypingSoon(delay = 450){
 
 const clearBtn = document.getElementById("clearSearch");
 
+// =================================
+// SEARCH
+// =================================
+
 // 1) Vårt eget kryss (knapp)
 clearBtn?.addEventListener("click", (e) => {
   e.preventDefault();
@@ -221,6 +236,10 @@ document.addEventListener("keydown", (e) => {
 const selectedFoodsListEl = document.getElementById("selectedFoodsList");
 const summaryEl = document.getElementById("summary");
 const sidebarHeader = document.querySelector(".sidebar-header");
+
+// =================================
+// DRAWER
+// =================================
 
 // Auto-hide header i alla mobila lägen (stående + liggande)
 let lastScrollY = 0;
@@ -276,6 +295,9 @@ function bindAutoHideHeader(){
   applyHeaderVisibility();
 }
 
+// =================================
+// UTILITIES
+// =================================
 
 function makeFinder(nutritionData){
   const rows = (nutritionData || []).map(n => ({
@@ -304,6 +326,29 @@ function onModalBackdropClick(e) {
   }
 }
 
+// =================================
+// CARD RENDERING
+// =================================
+
+function ensureResultsHeader(totalCount) {
+  const cardsWrap = document.getElementById('resultsCards');
+  if (!cardsWrap) return;
+
+  let header = document.getElementById('resultsHeader');
+  if (!header) {
+    header = document.createElement('div');
+    header.id = 'resultsHeader';
+    header.className = 'results-header';
+    cardsWrap.before(header);
+  }
+
+  const countLabel = totalCount === 1 ? '1 livsmedel' : `${totalCount} livsmedel`;
+  header.innerHTML = `
+    <h2>Sökresultat</h2>
+    <span class="results-count">${countLabel}</span>
+  `;
+}
+
 function renderInit(list, version, signal) {
   currentList = list || [];
   renderedCount = 0;
@@ -318,11 +363,13 @@ function renderInit(list, version, signal) {
   // Rensa tidigare kort för ny rendering
   const cardsWrap = document.getElementById('resultsCards');
   if (cardsWrap) cardsWrap.innerHTML = '';
+  ensureResultsHeader(currentList.length);
   // Se till att knappen börjar dold
   const btn = document.getElementById('loadMoreBtn');
   if (btn) btn.style.display = 'none';
 
   // Skapa/injicera sentinel för infinite scroll
+  document.querySelectorAll('#resultsSentinel').forEach(el => el.remove());
   sentinel = document.createElement('div');
   sentinel.id = 'resultsSentinel';
   sentinel.style.height = '1px';
@@ -744,6 +791,44 @@ function buildFilterPredicate(filterType) {
   }
 }
 
+// Lightweight visual system for food cards. No network dependency, and future
+// real images can be added in FOOD_IMAGE_OVERRIDES without changing rendering.
+const FOOD_IMAGE_OVERRIDES = new Map();
+const FOOD_VISUAL_CATEGORIES = [
+  { key: 'eggs', label: 'Ägg', icon: 'fa-solid fa-egg', test: /(^|\W)(ägg|agg|egg)/i },
+  { key: 'chicken', label: 'Fågel', icon: 'fa-solid fa-drumstick-bite', test: /kyckling|höns|hons|kalkon|fågel|fagel/i },
+  { key: 'fish', label: 'Fisk', icon: 'fa-solid fa-fish', test: /lax|torsk|sill|makrill|fisk|räk|rak|skaldjur|tonfisk|sej|kolja/i },
+  { key: 'meat', label: 'Kött', icon: 'fa-solid fa-bacon', test: /nötkött|notkott|fläsk|flask|gris|lamm|kött|kott|biff|korv|skinka|bacon/i },
+  { key: 'vegetables', label: 'Grönt', icon: 'fa-solid fa-carrot', test: /broccoli|grönsak|gronsak|sallad|spenat|kål|kal|morot|tomat|gurka|paprika|lök|lok|svamp|zucchini|blomkål/i },
+  { key: 'fruit', label: 'Frukt', icon: 'fa-solid fa-apple-whole', test: /äpple|apple|banan|apelsin|bär|bar|frukt|päron|paron|avokado|citron|lime/i },
+  { key: 'dairy', label: 'Mejeri', icon: 'fa-solid fa-cheese', test: /yoghurt|mjölk|mjolk|ost|grädde|gradde|kvarg|fil|keso|smör|smor/i },
+  { key: 'oils', label: 'Oljor', icon: 'fa-solid fa-droplet', test: /olja|olivolja|rapsolja|fett|majonnäs|majonnas|margarin/i },
+  { key: 'nuts', label: 'Nötter', icon: 'fa-solid fa-seedling', test: /mandel|nöt|not|jordnöt|jordnot|pistage|cashew|valnöt|valnot|frö|fro|chia|sesam/i },
+  { key: 'grain', label: 'Spannmål', icon: 'fa-solid fa-wheat-awn', test: /bröd|brod|pasta|ris|havre|vete|mjöl|mjol|gryn|couscous/i }
+];
+
+function getFoodVisual(food, groupName = '') {
+  const haystack = `${food?.namn || ''} ${groupName || ''}`.toLowerCase();
+  return FOOD_VISUAL_CATEGORIES.find(category => category.test.test(haystack))
+    || { key: 'general', label: 'Livsmedel', icon: 'fa-solid fa-utensils' };
+}
+
+function foodVisualHtml(food, groupName) {
+  const visual = getFoodVisual(food, groupName);
+  const imageSrc = FOOD_IMAGE_OVERRIDES.get(food.id) || FOOD_IMAGE_OVERRIDES.get(String(food.id));
+  const imageHtml = imageSrc
+    ? `<img src="${imageSrc}" alt="" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('image-failed');">`
+    : '';
+
+  return `
+    <div class="food-visual food-visual--${visual.key}" aria-hidden="true">
+      <span class="food-visual-icon"><i class="${visual.icon}" aria-hidden="true"></i></span>
+      <span class="food-visual-label">${visual.label}</span>
+      ${imageHtml}
+    </div>
+  `;
+}
+
 async function renderFoodCardsAppend(data, version = null, signal = null) {
   const cardsRoot = document.getElementById('resultsCards') || nutritionOutput;
   const cardsWrap = document.getElementById('resultsCards');
@@ -759,8 +844,14 @@ async function renderFoodCardsAppend(data, version = null, signal = null) {
     card.setAttribute("tabindex", "0");
 
     card.innerHTML = `
-      <h3>${food.namn}</h3>
-      <p class="loading">Laddar näringsvärden...</p>
+      <div class="food-visual food-visual--loading" aria-hidden="true">
+        <span class="food-visual-icon"><i class="fa-solid fa-utensils" aria-hidden="true"></i></span>
+        <span class="food-visual-label">Hämtar data</span>
+      </div>
+      <div class="food-card-body">
+        <h3>${food.namn}</h3>
+        <p class="loading">Laddar näringsvärden...</p>
+      </div>
     `;
     if (lastSearchTerm && food.namn.toLowerCase() === lastSearchTerm) {
       card.classList.add("highlight");
@@ -900,13 +991,29 @@ async function renderFoodCardsAppend(data, version = null, signal = null) {
       if (!card) return;
      
       card.innerHTML = `
-        <h3>${food.namn} <small class="per100">(per 100 g)</small></h3>
-        <p><strong>Grupp:</strong> ${groupName}</p>
-        <p><strong>Energi:</strong> ${energiKcal} kcal</p>
-        <p><strong>Kolhydrater:</strong> ${kolhydrater} g</p>
-        <p><strong>Fett:</strong> ${fett} g</p>
-        <p><strong>Protein:</strong> ${protein} g</p>
-        ${extrasHtml}
+        ${foodVisualHtml(food, groupName)}
+        <div class="food-card-body">
+          <div class="food-card-head">
+            <h3>${food.namn} <small class="per100">per 100 g</small></h3>
+            <span class="energy-pill">${energiKcal} kcal</span>
+          </div>
+          <p class="food-group">${groupName}</p>
+          <dl class="macro-grid">
+            <div>
+              <dt>Protein</dt>
+              <dd>${protein} g</dd>
+            </div>
+            <div>
+              <dt>Fett</dt>
+              <dd>${fett} g</dd>
+            </div>
+            <div>
+              <dt>Kolhydrater</dt>
+              <dd>${kolhydrater} g</dd>
+            </div>
+          </dl>
+          ${extrasHtml}
+        </div>
       `;
 
       if (lastSearchTerm && food.namn.toLowerCase() === lastSearchTerm) {
@@ -976,6 +1083,9 @@ function addFood(id, namn, energiKcal, kolhydrater, fett, protein, quantity = nu
   updateSummary();
 }
 
+// =================================
+// SELECTED FOODS
+// =================================
 
 function updateSelectedFoodsList() {
     foodList.innerHTML = "";
@@ -1044,6 +1154,16 @@ function decreaseQuantity(index) {
     adjustSelectedListHeight();
 }
 
+// =================================
+// SUMMARY
+// =================================
+
+function setSummaryMetric(id, label, value) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = `<span>${label}</span><strong>${value}</strong>`;
+}
+
 function updateSummary() {
   // Totals
   let totalEnergy = 0, totalCarbs = 0, totalFat = 0, totalProtein = 0;
@@ -1072,10 +1192,10 @@ function updateSummary() {
 
   const fmt1 = n => (Math.round(n * 10) / 10).toFixed(1);
 
-  document.getElementById("totalEnergy").textContent  = `Total energi: ${fmt1(totalEnergy)} kcal`;
-  document.getElementById("totalCarbs").textContent   = `Totala kolhydrater: ${fmt1(totalCarbs)} g`;
-  document.getElementById("totalFat").textContent     = `Totalt fett: ${fmt1(totalFat)} g`;
-  document.getElementById("totalProtein").textContent = `Totalt protein: ${fmt1(totalProtein)} g`;
+  setSummaryMetric("totalEnergy", "Energi", `${fmt1(totalEnergy)} kcal`);
+  setSummaryMetric("totalCarbs", "Kolhydrater", `${fmt1(totalCarbs)} g`);
+  setSummaryMetric("totalFat", "Fett", `${fmt1(totalFat)} g`);
+  setSummaryMetric("totalProtein", "Protein", `${fmt1(totalProtein)} g`);
 
   // Kommatecken-separerad rad med extra-summeringar
   const parts = [];
@@ -1116,7 +1236,16 @@ function syncRow(index, qty, numberEl, sliderEl, labelEl) {
   const name = selectedFoods[index].name;
   const maxLength = 35;
   const trimmedName = name.length > maxLength ? name.substring(0, maxLength - 3) + "..." : name;
-  if (labelEl) labelEl.textContent = `${q} g ${trimmedName}`;
+  if (labelEl) {
+    const qtyEl = labelEl.querySelector(".qty");
+    const nameEl = labelEl.querySelector(".name");
+    if (qtyEl && nameEl) {
+      qtyEl.textContent = `${q} g`;
+      nameEl.textContent = trimmedName;
+    } else {
+      labelEl.textContent = `${q} g ${trimmedName}`;
+    }
+  }
 
   // 4) Uppdatera summeringen direkt
   updateSummary();
@@ -1160,6 +1289,10 @@ window.editFood = function(index){
   showFoodModal(food, group, d, { mode: "edit", editIndex: index, presetQty: it.quantity });
 };
 
+// =================================
+// MODAL
+// =================================
+
 function showFoodModal(food, group, d, options = {}) {
   const modal = document.getElementById("foodModal");
   const body  = document.getElementById("modalBody");
@@ -1189,8 +1322,8 @@ function showFoodModal(food, group, d, options = {}) {
       Energi: ${d.energy_kcal} kcal · Kolhydrater: ${d.carbs_g} g · Fett: ${d.fat_g} g · Protein: ${d.protein_g} g
     </p>
 
-    <h3 style="margin-top:10px">Beräknat för <span id="modalQLabel">100</span> g</h3>
-    <ul id="modalCalcList" class="modal-main" style="list-style:none; padding-left:0; margin-top:6px">
+    <h3 class="modal-section-title">Beräknat för <span id="modalQLabel">100</span> g</h3>
+    <ul id="modalCalcList" class="modal-main">
       <li>Energi: <strong><span id="calcEnergy">0</span> kcal</strong></li>
       <li>Kolhydrater: <strong><span id="calcCarbs">0</span> g</strong></li>
       <li>Fett: <strong><span id="calcFat">0</span> g</strong></li>
@@ -1335,14 +1468,17 @@ function adjustSelectedListHeight() {
   if (isMobile()) {
     const hardCap = Math.max(0, containerHeight - summaryHeight - headerHeight - 20);
     const earlyCap = 200;
-    const maxListHeight = Math.min(earlyCap, hardCap);
+    const minUsableListHeight = selectedFoods.length ? 118 : 0;
+    const maxListHeight = Math.min(earlyCap, Math.max(minUsableListHeight, hardCap));
     list.style.maxHeight = maxListHeight + "px";
     list.style.overflowY = "auto";
     return;
   }
 
   const gutter = 12; // liten luft
-  const maxListHeight = Math.max(0, containerHeight - summaryHeight - headerHeight - gutter);
+  const hardCap = Math.max(0, containerHeight - summaryHeight - headerHeight - gutter);
+  const minUsableListHeight = selectedFoods.length ? 148 : 0;
+  const maxListHeight = Math.max(minUsableListHeight, hardCap);
   list.style.maxHeight = (list.scrollHeight > maxListHeight ? maxListHeight : "none");
   list.style.overflowY = "auto";
 }

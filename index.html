@@ -57,63 +57,77 @@
 
 <body>
 <header class="header-top">
-  <div class="header-meta">
-    <span class="data-badge">Data: Livsmedelsverkets öppna API</span>
+  <!-- HEADER / BRAND -->
+  <div class="header-shell">
+    <div class="brand-row">
       <img
-    class="brand-mark"
-    src="images/kp-cutlery-mark.png"
-    alt="Kostplaneraren – bestickikon"
+        class="brand-mark"
+        src="images/kp-cutlery-mark.png"
+        alt="Kostplaneraren – bestickikon"
       />
-  </div>
+      <div class="brand-copy">
+        <h1 class="site-title">
+          <a href="/" class="site-home-link" id="homeReset">
+            <span class="brand-accent">Kost</span><span>planeraren.se</span>
+          </a>
+        </h1>
+        <p class="site-sub">
+          Hitta livsmedel som passar din kosthållning – från LCHF till energismart vardagsmat
+        </p>
+      </div>
+      <div class="header-meta">
+        <span class="data-badge"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Data från Livsmedelsverket</span>
+        <span class="data-version">2025-10-29</span>
+      </div>
+    </div>
 
-  <form>
-    <div id="searchInput">
-      <h1 class="site-title">
-        <a href="/" class="site-home-link" id="homeReset">
-          Kostplaneraren.se
-        </a>
-      </h1>
-      <p class="site-sub">
-        Hitta livsmedel som passar din kosthållning – från LCHF till energisnål vardagsmat
-      </p>
+    <!-- SEARCH / FILTERS -->
+    <form class="search-panel">
+      <div id="searchInput">
+        <div class="search-row">
+          <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
+          <input type="text" id="foodInput" placeholder="Sök efter livsmedel, t.ex. ägg, kyckling, broccoli...">
+          <button type="button" id="clearSearch" class="clear-btn" aria-label="Rensa sökfält">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
 
-       <a class="site-credits" href="https://hildenmedia.se/" target="_blank" rel="noopener">
-        <img
-        src="images/hildenmedia-ghost.png"
-        alt="HildenMedia"
-        class="hm-mark"
-      /> HildenMedia</a>
-       
-       <div class="quick-filters" aria-label="Snabbval för kosthållning">
+        <div class="filter-row">
+          <div class="quick-filters" aria-label="Snabbval för kosthållning">
           <button type="button"
                   data-filter="alla"
                   title="Visa alla livsmedel">
+            <i class="fa-solid fa-border-all" aria-hidden="true"></i>
             Alla
           </button>
 
           <button type="button" data-filter="lchf_strikt"
                   title="Låg kolhydratmängd per 100 g">
+            <i class="fa-solid fa-droplet" aria-hidden="true"></i>
             LCHF / Keto
           </button>
 
           <button type="button" data-filter="hogprotein"
                   title="Proteinrikt per 100 g">
+            <i class="fa-solid fa-dumbbell" aria-hidden="true"></i>
             Proteinrikt
           </button>
 
           <button type="button" data-filter="fiberrik"
                   title="Bra för mage & tarm">
+            <i class="fa-solid fa-seedling" aria-hidden="true"></i>
             Mage & tarm
           </button>
 
           <button type="button" data-filter="lag_energi"
                   title="Låg energitäthet per 100 g">
+            <i class="fa-regular fa-gem" aria-hidden="true"></i>
             Energismart
           </button>
         </div>
 
        <div class="diet-filter">
-       <label for="dietSelect" style="margin-right:6px;">Filter:</label>
+       <label for="dietSelect">Filter</label>
           <select id="dietSelect">
           <option value="alla">Alla livsmedel</option>
 
@@ -139,39 +153,42 @@
           </select>
 
      </div>
-       <div class="search-row">
-         <input type="text" id="foodInput" placeholder="Sök efter livsmedel...">
-         <button type="button" id="clearSearch" class="clear-btn" aria-label="Rensa sökfält">
-           <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-          </button>
         </div>
-    </div>
-  </form>
+        <a class="site-credits" href="https://hildenmedia.se/" target="_blank" rel="noopener">
+          <img
+            src="images/hildenmedia-ghost.png"
+            alt="HildenMedia"
+            class="hm-mark"
+          /> HildenMedia
+        </a>
+      </div>
+    </form>
+  </div>
 
 </header>
 
 <main class="page">
-  <!-- Vänsterkolumn: Sökresultat -->
+  <!-- RESULTS -->
   <div id="nutritionOutput" class="main-left"></div>
 
-  <!-- Högerkolumn: Matlista + summering -->
+  <!-- SIDEBAR -->
   <div class="main-right">
 
     <div class="right-inner">
 
-    <!-- Sidebar header: OUTSIDE the scrolling list -->
+    <!-- SELECTED FOODS -->
         <div class="sidebar-header">
-        <h3>Matlista</h3>
-        <button id="clearListButton">Rensa lista</button>
+        <h3>Dina valda livsmedel</h3>
+        <button id="clearListButton"><i class="fa-regular fa-trash-can" aria-hidden="true"></i> Rensa lista</button>
         </div>
 
         <div id="selectedFoodsList" class="food-list">
         <ul id="foodList"></ul>
         </div>
 
-      <!-- Summering -->
+      <!-- SUMMARY -->
       <div id="summary">
-        <h3>Summering</h3>
+        <h3>Näringsöversikt</h3>
         <p id="totalEnergy">Total energi: 0 kcal</p>
         <p id="totalCarbs">Totala kolhydrater: 0 g</p>
         <p id="totalFat">Totalt fett: 0 g</p>
@@ -189,7 +206,7 @@
   Livsmedelsverkets öppna databas.
 </p>
 </section>
-      <!-- Mobil: utfällbar låda för Matlista + Summering -->
+  <!-- MOBILE DRAWER -->
   <div class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
     <button class="drawer-handle" id="drawerHandle" aria-expanded="false" type="button">
       <span class="drawer-label">
@@ -202,10 +219,11 @@
 
     <div class="drawer-content" id="drawerContent"><!-- här flyttas innehållet in på mobil --></div>
   </div>
-  <!-- Modal-bakgrund -->
+
+  <!-- MODAL -->
 <div id="foodModal" class="modal" hidden aria-hidden="true" role="dialog" aria-modal="true">
   <div class="modal-content">
-    <span class="close">&times;</span>
+    <button class="close" type="button" aria-label="Stäng">&times;</button>
     <div id="modalBody"></div>
   </div>
 </div>
