@@ -6,6 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kostplaneraren – LCHF, proteinrikt & energismart</title>
     <link rel="canonical" href="https://kostplaneraren.se/">
+    <script>
+      (function () {
+        const storageKey = "kostplaneraren-theme";
+        const root = document.documentElement;
+        let storedTheme = null;
+
+        try {
+          storedTheme = localStorage.getItem(storageKey);
+        } catch (error) {
+          storedTheme = null;
+        }
+
+        const systemTheme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+        const theme = storedTheme === "dark" || storedTheme === "light"
+          ? storedTheme
+          : systemTheme;
+
+        root.dataset.theme = theme;
+        root.style.colorScheme = theme;
+      })();
+    </script>
     <link rel="stylesheet" href="css/style.css?v=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -15,7 +38,7 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="manifest" href="/site.webmanifest">
 
-    <meta name="theme-color" content="#1d2326">
+    <meta name="theme-color" content="#07100d">
     <meta name="apple-mobile-web-app-title" content="Kostplaneraren">
 
     <!-- SEO / Canonical -->
@@ -60,11 +83,18 @@
   <!-- HEADER / BRAND -->
   <div class="header-shell">
     <div class="brand-row">
-      <img
-        class="brand-mark"
-        src="images/kp-cutlery-mark.png"
-        alt="Kostplaneraren – bestickikon"
-      />
+      <span class="brand-mark-shell" role="img" aria-label="Kostplaneraren – bestickikon">
+        <img
+          class="brand-mark brand-mark--dark"
+          src="images/kp-cutlery-mark.png"
+          alt=""
+        />
+        <img
+          class="brand-mark brand-mark--light"
+          src="images/kp-icon-lightmode.png"
+          alt=""
+        />
+      </span>
       <div class="brand-copy">
         <h1 class="site-title">
           <a href="/" class="site-home-link" id="homeReset">
@@ -78,6 +108,20 @@
       <div class="header-meta">
         <span class="data-badge"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Data från Livsmedelsverket</span>
         <span class="data-version">2025-10-29</span>
+        <button
+          class="theme-toggle"
+          id="themeToggle"
+          type="button"
+          aria-label="Byt färgtema"
+          aria-pressed="false"
+        >
+          <span class="theme-toggle-track" aria-hidden="true">
+            <i class="fa-solid fa-moon theme-toggle-icon theme-toggle-icon-dark"></i>
+            <i class="fa-solid fa-sun theme-toggle-icon theme-toggle-icon-light"></i>
+            <span class="theme-toggle-thumb"></span>
+          </span>
+          <span class="theme-toggle-text">Mörkt</span>
+        </button>
       </div>
     </div>
 
@@ -155,11 +199,19 @@
      </div>
         </div>
         <a class="site-credits" href="https://hildenmedia.se/" target="_blank" rel="noopener">
-          <img
-            src="images/hildenmedia-ghost.png"
-            alt="HildenMedia"
-            class="hm-mark"
-          /> HildenMedia
+          <span class="hm-mark-shell" aria-hidden="true">
+            <img
+              src="images/hildenmedia-ghost.png"
+              alt=""
+              class="hm-mark hm-mark--dark"
+            />
+            <img
+              src="images/hildenmedia-ghost-lightmode.png"
+              alt=""
+              class="hm-mark hm-mark--light"
+            />
+          </span>
+          HildenMedia
         </a>
       </div>
     </form>

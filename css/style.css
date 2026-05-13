@@ -1,32 +1,146 @@
 /* =================================
-   GLOBAL
+   THEME TOKENS
 ================================= */
 :root {
-  --bg: #07100d;
-  --bg-deep: #030806;
-  --surface: rgba(11, 22, 18, 0.82);
-  --surface-strong: rgba(13, 27, 22, 0.96);
-  --surface-soft: rgba(255, 255, 255, 0.045);
-  --border: rgba(191, 232, 201, 0.16);
-  --border-strong: rgba(142, 219, 92, 0.36);
-  --text: #f3f7f2;
-  --text-muted: rgba(229, 238, 229, 0.72);
-  --text-soft: rgba(229, 238, 229, 0.56);
-  --accent: #73c83e;
-  --accent-strong: #8fe35a;
-  --accent-deep: #1f5f34;
-  --cyan: #28b7ab;
-  --amber: #f5b61d;
-  --danger: #ff6b5f;
-  --shadow: 0 18px 48px rgba(0, 0, 0, 0.34);
-  --shadow-soft: 0 10px 28px rgba(0, 0, 0, 0.2);
   --radius: 8px;
   --max-page: 1480px;
   --header-meta-h: 52px;
   --header-h: 260px;
   --modal-top: 16vh;
   --modal-bottom: 6vh;
+
+  --accent: #73c83e;
+  --accent-strong: #8fe35a;
+  --accent-deep: #1f5f34;
+  --cyan: #28b7ab;
+  --amber: #f5b61d;
+  --danger: #ff6b5f;
+  --transition-theme: background-color 0.24s ease, border-color 0.24s ease, color 0.24s ease, box-shadow 0.24s ease;
 }
+
+/* =================================
+   DARK THEME
+================================= */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --theme-color: #07100d;
+  --bg: #07100d;
+  --bg-deep: #030806;
+  --surface: rgba(11, 22, 18, 0.82);
+  --surface-strong: rgba(13, 27, 22, 0.96);
+  --surface-soft: rgba(255, 255, 255, 0.045);
+  --border: rgba(191, 232, 201, 0.16);
+  --border-soft: rgba(221, 244, 222, 0.1);
+  --border-control: rgba(221, 244, 222, 0.17);
+  --border-input: rgba(221, 244, 222, 0.2);
+  --border-strong: rgba(142, 219, 92, 0.36);
+  --text: #f3f7f2;
+  --text-muted: rgba(229, 238, 229, 0.72);
+  --text-soft: rgba(229, 238, 229, 0.56);
+  --icon-muted: rgba(237, 245, 235, 0.68);
+  --placeholder: rgba(235, 242, 235, 0.52);
+  --page-bg: radial-gradient(circle at 70% -20%, rgba(99, 184, 55, 0.16), transparent 36rem),
+    radial-gradient(circle at 8% 0%, rgba(40, 183, 171, 0.09), transparent 28rem),
+    linear-gradient(145deg, #040b08 0%, #07120e 45%, #101511 100%);
+  --page-grid: linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+  --header-bg: linear-gradient(180deg, rgba(3, 10, 7, 0.96), rgba(5, 16, 12, 0.9)),
+    radial-gradient(circle at 64% 0%, rgba(115, 200, 62, 0.14), transparent 34rem);
+  --header-border: rgba(191, 232, 201, 0.12);
+  --header-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+  --panel-bg: linear-gradient(135deg, rgba(9, 20, 16, 0.82), rgba(5, 14, 11, 0.7));
+  --panel-bg-strong: linear-gradient(150deg, rgba(9, 21, 17, 0.92), rgba(5, 13, 10, 0.82));
+  --card-bg: linear-gradient(160deg, rgba(13, 28, 23, 0.94), rgba(5, 13, 10, 0.9));
+  --modal-bg: linear-gradient(155deg, rgba(13, 27, 22, 0.98), rgba(5, 13, 10, 0.98));
+  --input-bg: rgba(0, 0, 0, 0.18);
+  --input-bg-focus: rgba(0, 0, 0, 0.25);
+  --control-bg: rgba(255, 255, 255, 0.05);
+  --control-hover-bg: rgba(255, 255, 255, 0.08);
+  --active-bg: linear-gradient(135deg, rgba(115, 200, 62, 0.34), rgba(31, 95, 52, 0.38));
+  --action-bg: linear-gradient(135deg, rgba(115, 200, 62, 0.22), rgba(31, 95, 52, 0.28));
+  --primary-action-bg: linear-gradient(135deg, rgba(115, 200, 62, 0.42), rgba(31, 95, 52, 0.5));
+  --summary-bg: rgba(255, 255, 255, 0.028);
+  --summary-row-bg: rgba(0, 0, 0, 0.16);
+  --modal-backdrop: rgba(0, 0, 0, 0.62);
+  --drawer-handle-bg: linear-gradient(135deg, rgba(31, 95, 52, 0.98), rgba(12, 58, 36, 0.98));
+  --drawer-panel-bg: linear-gradient(150deg, rgba(12, 25, 20, 0.98), rgba(5, 13, 10, 0.98));
+  --drawer-backdrop: rgba(0, 0, 0, 0.36);
+  --visual-base: radial-gradient(circle at 38% 24%, rgba(255, 255, 255, 0.18), transparent 0 18%, transparent 34%),
+    linear-gradient(135deg, rgba(72, 132, 58, 0.48), rgba(6, 17, 13, 0.94));
+  --visual-overlay: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.36) 100%),
+    radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.12), transparent 34%);
+  --visual-icon-bg: rgba(0, 0, 0, 0.22);
+  --visual-label-bg: rgba(0, 0, 0, 0.28);
+  --shadow: 0 18px 48px rgba(0, 0, 0, 0.34);
+  --shadow-soft: 0 10px 28px rgba(0, 0, 0, 0.2);
+  --shadow-card: 0 14px 34px rgba(0, 0, 0, 0.22);
+}
+
+/* =================================
+   LIGHT THEME
+================================= */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --theme-color: #f3eee4;
+  --bg: #f3eee4;
+  --bg-deep: #ebe4d6;
+  --surface: rgba(255, 252, 244, 0.78);
+  --surface-strong: rgba(255, 252, 244, 0.94);
+  --surface-soft: rgba(48, 82, 49, 0.055);
+  --border: rgba(67, 102, 62, 0.18);
+  --border-soft: rgba(67, 102, 62, 0.12);
+  --border-control: rgba(67, 102, 62, 0.2);
+  --border-input: rgba(67, 102, 62, 0.24);
+  --border-strong: rgba(80, 135, 46, 0.46);
+  --text: #18221b;
+  --text-muted: rgba(31, 38, 31, 0.88);
+  --text-soft: rgba(54, 52, 44, 0.78);
+  --icon-muted: rgba(42, 74, 43, 0.8);
+  --placeholder: rgba(54, 58, 51, 0.74);
+  --accent: #5c9f32;
+  --accent-strong: #477f29;
+  --accent-deep: #2f6130;
+  --page-bg: radial-gradient(circle at 74% -16%, rgba(128, 178, 74, 0.18), transparent 34rem),
+    radial-gradient(circle at 8% 0%, rgba(203, 225, 184, 0.38), transparent 30rem),
+    linear-gradient(145deg, #f7f1e7 0%, #eee8db 52%, #e9e2d4 100%);
+  --page-grid: linear-gradient(rgba(58, 92, 56, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(58, 92, 56, 0.026) 1px, transparent 1px);
+  --header-bg: linear-gradient(180deg, rgba(250, 246, 236, 0.96), rgba(244, 238, 225, 0.9)),
+    radial-gradient(circle at 64% 0%, rgba(128, 178, 74, 0.17), transparent 34rem);
+  --header-border: rgba(78, 109, 69, 0.16);
+  --header-shadow: 0 18px 38px rgba(70, 60, 43, 0.11);
+  --panel-bg: linear-gradient(135deg, rgba(255, 252, 244, 0.76), rgba(243, 237, 225, 0.66));
+  --panel-bg-strong: linear-gradient(150deg, rgba(255, 252, 244, 0.9), rgba(242, 236, 224, 0.84));
+  --card-bg: linear-gradient(160deg, rgba(255, 252, 244, 0.96), rgba(239, 234, 221, 0.9));
+  --modal-bg: linear-gradient(155deg, rgba(255, 252, 244, 0.98), rgba(239, 234, 221, 0.98));
+  --input-bg: rgba(255, 255, 250, 0.58);
+  --input-bg-focus: rgba(255, 255, 250, 0.82);
+  --control-bg: rgba(255, 252, 244, 0.62);
+  --control-hover-bg: rgba(89, 137, 72, 0.09);
+  --active-bg: linear-gradient(135deg, rgba(101, 159, 55, 0.28), rgba(193, 224, 166, 0.62));
+  --action-bg: linear-gradient(135deg, rgba(119, 172, 69, 0.18), rgba(226, 239, 211, 0.55));
+  --primary-action-bg: linear-gradient(135deg, rgba(99, 160, 55, 0.28), rgba(216, 235, 196, 0.7));
+  --summary-bg: rgba(95, 133, 78, 0.045);
+  --summary-row-bg: rgba(255, 252, 244, 0.66);
+  --modal-backdrop: rgba(32, 37, 29, 0.34);
+  --drawer-handle-bg: linear-gradient(135deg, rgba(70, 124, 47, 0.98), rgba(44, 98, 47, 0.98));
+  --drawer-panel-bg: linear-gradient(150deg, rgba(255, 252, 244, 0.98), rgba(239, 234, 221, 0.98));
+  --drawer-backdrop: rgba(42, 48, 36, 0.24);
+  --visual-base: radial-gradient(circle at 38% 24%, rgba(255, 255, 255, 0.42), transparent 0 18%, transparent 34%),
+    linear-gradient(135deg, rgba(138, 179, 91, 0.38), rgba(222, 232, 207, 0.92));
+  --visual-overlay: linear-gradient(180deg, transparent 0%, rgba(72, 83, 63, 0.18) 100%),
+    radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.42), transparent 34%);
+  --visual-icon-bg: rgba(255, 252, 244, 0.42);
+  --visual-label-bg: rgba(255, 252, 244, 0.58);
+  --shadow: 0 18px 42px rgba(84, 71, 49, 0.16);
+  --shadow-soft: 0 10px 26px rgba(84, 71, 49, 0.1);
+  --shadow-card: 0 14px 30px rgba(84, 71, 49, 0.12);
+}
+
+/* =================================
+   GLOBAL
+================================= */
 
 * {
   box-sizing: border-box;
@@ -151,12 +265,27 @@ h3 {
   gap: clamp(14px, 2.4vw, 26px);
 }
 
-.brand-mark {
+.brand-mark-shell {
+  position: relative;
   width: clamp(62px, 7vw, 94px);
   height: clamp(62px, 7vw, 94px);
   display: block;
+  flex: 0 0 auto;
+}
+
+.brand-mark {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
   object-fit: contain;
   filter: drop-shadow(0 14px 26px rgba(89, 197, 56, 0.18));
+  transition: opacity 0.22s ease, filter 0.22s ease;
+}
+
+.brand-mark--light {
+  opacity: 0;
 }
 
 .brand-copy {
@@ -391,10 +520,26 @@ h3 {
   outline: none;
 }
 
-.hm-mark {
-  width: auto;
+.hm-mark-shell {
+  position: relative;
+  width: 18px;
   height: 18px;
+  display: inline-block;
+  flex: 0 0 18px;
+}
+
+.hm-mark {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   opacity: 0.76;
+  transition: opacity 0.22s ease;
+}
+
+.hm-mark--light {
+  opacity: 0;
 }
 
 /* =================================
@@ -1288,7 +1433,7 @@ input[type="number"] {
     gap: 12px;
   }
 
-  .brand-mark {
+  .brand-mark-shell {
     width: 54px;
     height: 54px;
   }
@@ -1545,10 +1690,6 @@ input[type="number"] {
     grid-template-columns: auto minmax(0, 1fr);
   }
 
-  .header-meta {
-    display: none;
-  }
-
   .quick-filters {
     grid-template-columns: 1fr 1fr;
   }
@@ -1587,5 +1728,442 @@ input[type="number"] {
 
   .seo-text {
     margin-bottom: 72px;
+  }
+}
+
+/* =================================
+   COMPONENT THEMING
+================================= */
+html {
+  background: var(--bg-deep);
+}
+
+body {
+  color: var(--text);
+  background: var(--page-bg);
+  transition: var(--transition-theme);
+}
+
+body::before {
+  background: var(--page-grid);
+}
+
+.header-top,
+.search-panel,
+.right-inner,
+.empty-state,
+.food-card,
+.modal-content,
+.drawer-content,
+#summary,
+#summary p,
+#foodInput,
+.diet-filter select,
+.quantity-input,
+input[type="number"],
+.quick-filters button,
+#clearListButton,
+#loadMoreBtn,
+#modalAddBtn,
+.adjust-button,
+.food-card .chip,
+.energy-pill,
+.theme-toggle {
+  transition: var(--transition-theme), transform 0.16s ease;
+}
+
+.header-top {
+  background: var(--header-bg);
+  border-bottom-color: var(--header-border);
+  box-shadow: var(--header-shadow);
+}
+
+.search-panel,
+.empty-state {
+  background: var(--panel-bg);
+  border-color: var(--border);
+  box-shadow: var(--shadow-soft);
+}
+
+.right-inner {
+  background: var(--panel-bg-strong);
+  border-color: var(--border);
+  box-shadow: var(--shadow-soft);
+}
+
+.site-title,
+.data-version,
+.food-card h3,
+.macro-grid dd,
+.sidebar-header h3,
+#summary h3,
+#summary p strong,
+#modalBody h2,
+#modalCalcList.modal-main strong,
+.modal-extras li.extra strong,
+.food-amount .name {
+  color: var(--text);
+}
+
+.site-sub,
+.header-meta,
+.diet-filter label,
+.empty-state,
+.results-count,
+.food-group,
+.macro-grid dt,
+.food-card .loading,
+#summary p,
+.modal-extras li.extra,
+#modalBody p,
+.btn-secondary.external,
+.nutr-extras summary,
+.food-amount .qty {
+  color: var(--text-muted);
+}
+
+.site-credits,
+.source-note,
+.site-disclaimer,
+.per100,
+.modal-source,
+.summary-meta {
+  color: var(--text-soft) !important;
+}
+
+.search-icon,
+.clear-btn {
+  color: var(--icon-muted);
+}
+
+#foodInput,
+.diet-filter select,
+.quantity-input,
+input[type="number"] {
+  color: var(--text);
+  background: var(--input-bg);
+  border-color: var(--border-input);
+}
+
+#foodInput::placeholder {
+  color: var(--placeholder);
+}
+
+#foodInput:focus,
+.quantity-input:focus {
+  background: var(--input-bg-focus);
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.quick-filters button,
+#clearListButton,
+#loadMoreBtn,
+#modalAddBtn,
+.adjust-button,
+.theme-toggle {
+  color: var(--text);
+  background: var(--control-bg);
+  border-color: var(--border-control);
+}
+
+.quick-filters button:hover,
+.quick-filters button:focus-visible,
+.quick-filters button.is-active {
+  background: var(--active-bg);
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+:root[data-theme="light"] .brand-mark--dark {
+  opacity: 0;
+}
+
+:root[data-theme="light"] .brand-mark--light {
+  opacity: 1;
+  filter: drop-shadow(0 12px 22px rgba(77, 121, 48, 0.16));
+}
+
+:root[data-theme="light"] .quick-filters button i {
+  color: #496b3f;
+}
+
+:root[data-theme="light"] .quick-filters button:hover i,
+:root[data-theme="light"] .quick-filters button:focus-visible i,
+:root[data-theme="light"] .quick-filters button.is-active i {
+  color: #2f612f;
+}
+
+:root[data-theme="light"] .hm-mark--dark {
+  opacity: 0;
+}
+
+:root[data-theme="light"] .hm-mark--light {
+  opacity: 0.9;
+}
+
+#clearListButton,
+#loadMoreBtn {
+  background: var(--action-bg);
+  border-color: var(--border-strong);
+}
+
+#modalAddBtn {
+  background: var(--primary-action-bg);
+  border-color: var(--border-strong);
+}
+
+.clear-btn:hover,
+.clear-btn:focus-visible,
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+  color: var(--text);
+  background: var(--control-hover-bg);
+}
+
+.food-card {
+  background: var(--card-bg);
+  border-color: var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+.food-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow);
+}
+
+.food-card:focus-visible,
+.food-card.highlight {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent), var(--shadow-soft);
+}
+
+.food-visual {
+  background: var(--visual-base);
+}
+
+.food-visual::before {
+  background: var(--visual-overlay);
+}
+
+.food-visual-icon {
+  color: var(--text);
+  background: var(--visual-icon-bg);
+  border-color: var(--border-soft);
+}
+
+.food-visual-label {
+  color: var(--text);
+  background: var(--visual-label-bg);
+  border-color: var(--border-soft);
+}
+
+.food-card .chip {
+  color: var(--text-muted);
+  background: var(--surface-soft);
+  border-color: var(--border-soft);
+}
+
+.energy-pill {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.sidebar-header {
+  background: var(--surface-strong);
+  border-bottom-color: var(--border-soft);
+}
+
+.food-list-item {
+  border-bottom-color: var(--border-soft);
+}
+
+.adjust-button.remove {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+  border-color: color-mix(in srgb, var(--danger) 20%, transparent);
+}
+
+#summary {
+  background: var(--summary-bg);
+  border-top-color: var(--border);
+}
+
+#summary p,
+#modalCalcList.modal-main li,
+.modal-extras li.extra {
+  background: var(--summary-row-bg);
+  border-color: var(--border-soft);
+}
+
+.modal {
+  background: var(--modal-backdrop);
+}
+
+.modal-content {
+  background: var(--modal-bg);
+  border-color: var(--border);
+  box-shadow: var(--shadow);
+}
+
+.close {
+  color: var(--text-muted);
+  background: var(--control-bg);
+  border-color: var(--border-soft);
+}
+
+.drawer-handle {
+  background: var(--drawer-handle-bg);
+  border-top-color: var(--border-strong);
+  box-shadow: 0 -12px 32px color-mix(in srgb, #000 26%, transparent);
+}
+
+.drawer-content {
+  color: var(--text);
+  background: var(--drawer-panel-bg);
+  border-top-color: var(--border-strong);
+  box-shadow: var(--shadow);
+}
+
+.mobile-drawer .drawer-backdrop {
+  background: var(--drawer-backdrop);
+}
+
+.seo-text {
+  border-top-color: var(--border-soft);
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--accent) 34%, transparent);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-soft);
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 34px;
+  padding: 4px 9px 4px 5px;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+  border: 1px solid var(--border-control);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.theme-toggle-track {
+  position: relative;
+  width: 52px;
+  height: 26px;
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  justify-items: center;
+  color: var(--text-soft);
+  background: var(--input-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+}
+
+.theme-toggle-icon {
+  position: relative;
+  z-index: 1;
+  font-size: 12px;
+}
+
+.theme-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 5px 12px color-mix(in srgb, #000 24%, transparent);
+  transition: transform 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+:root[data-theme="light"] .theme-toggle-thumb {
+  transform: translateX(26px);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--border-strong);
+  outline-offset: 3px;
+}
+
+:root[data-theme="light"] .food-visual--eggs {
+  background: linear-gradient(135deg, #e8e0cd, #faf6ec 62%, #e5dccb);
+}
+
+:root[data-theme="light"] .food-visual--chicken,
+:root[data-theme="light"] .food-visual--meat {
+  background: linear-gradient(135deg, #e4c8af, #f7efe2 62%, #dfd2bf);
+}
+
+:root[data-theme="light"] .food-visual--fish {
+  background: linear-gradient(135deg, #b9d8d5, #eef3e8 62%, #d8e2d8);
+}
+
+:root[data-theme="light"] .food-visual--vegetables,
+:root[data-theme="light"] .food-visual--fruit {
+  background: linear-gradient(135deg, #c7ddb4, #f2f1e4 62%, #d9e3cc);
+}
+
+:root[data-theme="light"] .food-visual--nuts,
+:root[data-theme="light"] .food-visual--grain {
+  background: linear-gradient(135deg, #dcc49d, #f5efe1 62%, #e3d5bb);
+}
+
+:root[data-theme="light"] .food-visual--dairy {
+  background: linear-gradient(135deg, #d6ddd3, #fbf7ef 62%, #e2ddd1);
+}
+
+:root[data-theme="light"] .food-visual--oils {
+  background: linear-gradient(135deg, #dfcd80, #f7f0d8 62%, #e7dfbf);
+}
+
+@media (max-width: 560px) {
+  .header-meta {
+    display: flex;
+  }
+
+  .header-meta .data-badge,
+  .header-meta .data-version {
+    display: none;
+  }
+
+  .theme-toggle {
+    margin-left: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  .header-top,
+  .search-panel,
+  .right-inner,
+  .empty-state,
+  .food-card,
+  .modal-content,
+  .drawer-content,
+  #summary,
+  #summary p,
+  #foodInput,
+  .diet-filter select,
+  .quantity-input,
+  input[type="number"],
+  .quick-filters button,
+  #clearListButton,
+  #loadMoreBtn,
+  #modalAddBtn,
+  .adjust-button,
+  .theme-toggle,
+  .theme-toggle-thumb {
+    transition: none;
   }
 }

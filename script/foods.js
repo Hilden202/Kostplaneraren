@@ -10,6 +10,102 @@ const DEFAULT_SLIDER_MAX = 1000;
 const mobileDrawer = document.getElementById("mobileDrawer");
 const drawerHandle = document.getElementById("drawerHandle");
 const drawerContent = document.getElementById("drawerContent");
+
+// =================================
+// THEME
+// =================================
+
+const THEME_STORAGE_KEY = "kostplaneraren-theme";
+const THEME_META_COLORS = {
+  dark: "#07100d",
+  light: "#f3eee4"
+};
+
+function getStoredTheme() {
+  try {
+    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    return storedTheme === "dark" || storedTheme === "light" ? storedTheme : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function getSystemTheme() {
+  if (typeof window.matchMedia === "function" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    return "dark";
+  }
+  return "light";
+}
+
+function setStoredTheme(theme) {
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch (error) {
+    // Theme still applies for this page view if storage is unavailable.
+  }
+}
+
+function updateThemeToggle(theme) {
+  const toggle = document.getElementById("themeToggle");
+  if (!toggle) return;
+
+  const isLight = theme === "light";
+  const label = isLight
+    ? "Ljust tema aktivt. Byt till mörkt läge"
+    : "Mörkt tema aktivt. Byt till ljust läge";
+  const text = toggle.querySelector(".theme-toggle-text");
+
+  toggle.setAttribute("aria-label", label);
+  toggle.setAttribute("aria-pressed", isLight ? "true" : "false");
+  toggle.title = label;
+  if (text) text.textContent = isLight ? "Ljust" : "Mörkt";
+}
+
+function applyTheme(theme, options = {}) {
+  const nextTheme = theme === "light" ? "light" : "dark";
+
+  document.documentElement.dataset.theme = nextTheme;
+  document.documentElement.style.colorScheme = nextTheme;
+
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  if (themeMeta) themeMeta.setAttribute("content", THEME_META_COLORS[nextTheme]);
+
+  updateThemeToggle(nextTheme);
+
+  if (options.persist) {
+    setStoredTheme(nextTheme);
+  }
+}
+
+function initThemeToggle() {
+  const initialTheme = document.documentElement.dataset.theme || getStoredTheme() || getSystemTheme();
+  const toggle = document.getElementById("themeToggle");
+  const systemThemeQuery = typeof window.matchMedia === "function"
+    ? window.matchMedia("(prefers-color-scheme: dark)")
+    : null;
+
+  applyTheme(initialTheme);
+
+  toggle?.addEventListener("click", () => {
+    const currentTheme = document.documentElement.dataset.theme === "light" ? "light" : "dark";
+    applyTheme(currentTheme === "light" ? "dark" : "light", { persist: true });
+  });
+
+  const syncSystemTheme = () => {
+    if (!getStoredTheme()) {
+      applyTheme(getSystemTheme());
+    }
+  };
+
+  if (systemThemeQuery?.addEventListener) {
+    systemThemeQuery.addEventListener("change", syncSystemTheme);
+  } else if (systemThemeQuery?.addListener) {
+    systemThemeQuery.addListener(syncSystemTheme);
+  }
+}
+
+initThemeToggle();
+
 // Backdrop för klick-utanför-stäng
 const drawerBackdrop = mobileDrawer?.querySelector(".drawer-backdrop");
 drawerBackdrop?.addEventListener("click", () => {
