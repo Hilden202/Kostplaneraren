@@ -1,3 +1,14 @@
+<!-- kostplaneraren banner -->
+<div align="center">
+  <a href="https://kostplaneraren.se" target="_blank">
+    <img
+      height="220"
+      src="https://raw.githubusercontent.com/Hilden202/HildenMedia/main/images/kostplaneraren-banner.png"
+      alt="Kostplaneraren – näringsdata från Livsmedelsverkets öppna API"
+    />
+  </a>
+</div>
+
 # Kostplaneraren 🥗
 Planera måltider med näringsdata från Livsmedelsverkets öppna API.
 
