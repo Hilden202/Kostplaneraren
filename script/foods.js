@@ -334,62 +334,333 @@ const summaryEl = document.getElementById("summary");
 const sidebarHeader = document.querySelector(".sidebar-header");
 
 // =================================
-// DRAWER
+// MOBILE COLLAPSIBLE HEADER
 // =================================
 
-// Auto-hide header i alla mobila lägen (stående + liggande)
-let lastScrollY = 0;
-let scrollingRAF = null;
-function getScrollY(){
-  const root = getScrollRoot();
-  return root ? root.scrollTop : window.scrollY;
+function getHeaderScrollRoot() {
+  return isMobileAny() ? window : (getScrollRoot() || window);
 }
 
-function applyHeaderVisibility() {
-  const header = document.querySelector(".header-top");
-  if (!header || !isMobileAny()) {
-    header?.classList.remove("header-hidden");
-    return;
-  }
-
-  // Om något lås är aktivt: håll headern synlig och hoppa ur.
-  if (isHeaderLocked()) {
-    header.classList.remove("header-hidden");
-    document.documentElement.classList.remove("hdr-hidden");
-    return;
-  }
-
-  const y = getScrollY();
-  const nearTop = y <= 8;
-  const scrollingDown = y > lastScrollY;
-
-  if (!nearTop && scrollingDown) {
-    header.classList.add("header-hidden");
-    document.documentElement.classList.add("hdr-hidden");
-  } else {
-    header.classList.remove("header-hidden");
-    document.documentElement.classList.remove("hdr-hidden");
-  }
-
-  requestAnimationFrame(adjustSelectedListHeight);
-  lastScrollY = y;
+function getScrollY() {
+  const root = getHeaderScrollRoot();
+  return root === window ? window.scrollY : root.scrollTop;
 }
 
-function bindAutoHideHeader(){
-  const root = getScrollRoot() || window;
-  const onScroll = () => {
+const mobileHeaderPanel = (() => {
+  const COLLAPSE_SCROLL_Y = 96;
+  const TOP_EXPAND_Y = 6;
+  const MANUAL_SCROLL_DELTA = 42;
+  const DRAG_TRIGGER_Y = 26;
+
+  let collapsed = false;
+  let lastScrollY = 0;
+  let manualExpandedAtY = null;
+  let scrollingRAF = null;
+  let unbindScroll = null;
+  let handleBound = false;
+  let dragState = null;
+  let suppressNextClick = false;
+
+  const getHeader = () => document.querySelector(".header-top");
+  const getHandle = () => document.getElementById("mobileHeaderHandle");
+  const getPanel = () => document.getElementById("mobileHeaderPanel");
+
+  function refreshDependentLayout() {
+    requestAnimationFrame(() => {
+      setHeaderHeightVar();
+      adjustSelectedListHeight();
+    });
+  }
+
+  function updateHandle(isCollapsed) {
+    const handle = getHandle();
+    if (!handle) return;
+
+    const isExpanded = isMobileAny() && !isCollapsed;
+    const label = isCollapsed ? "Visa hela toppanelen" : "Dölj toppanelen";
+
+    handle.setAttribute("aria-expanded", isExpanded ? "true" : "false");
+    handle.setAttribute("aria-label", label);
+    handle.title = label;
+  }
+
+  function updatePanelAccess(isCollapsed) {
+    const panel = getPanel();
+    if (!panel) return;
+
+    if (isCollapsed && isMobileAny()) {
+      panel.setAttribute("aria-hidden", "true");
+      panel.inert = true;
+      return;
+    }
+
+    panel.removeAttribute("aria-hidden");
+    panel.inert = false;
+  }
+
+  function setCollapsed(nextCollapsed) {
+    const header = getHeader();
+    if (!header) return;
+
+    if (!isMobileAny()) {
+      collapsed = false;
+      manualExpandedAtY = null;
+      header.classList.remove("header-collapsed", "header-expanded", "header-hidden");
+      document.documentElement.classList.remove("hdr-collapsed", "hdr-hidden");
+      updatePanelAccess(false);
+      updateHandle(false);
+      return;
+    }
+
+    collapsed = Boolean(nextCollapsed);
+    header.classList.toggle("header-collapsed", collapsed);
+    header.classList.toggle("header-expanded", !collapsed);
+    header.classList.remove("header-hidden");
+    document.documentElement.classList.toggle("hdr-collapsed", collapsed);
+    document.documentElement.classList.remove("hdr-hidden");
+    updatePanelAccess(collapsed);
+    updateHandle(collapsed);
+    refreshDependentLayout();
+  }
+
+  function expand(options = {}) {
+    if (options.manual) {
+      manualExpandedAtY = getScrollY();
+    }
+    setCollapsed(false);
+  }
+
+  function collapse(options = {}) {
+    if (isHeaderLocked()) return;
+    if (options.manual) {
+      manualExpandedAtY = null;
+    }
+    setCollapsed(true);
+  }
+
+  function refreshFromScroll() {
+    const header = getHeader();
+    if (!header) return;
+
+    const y = getScrollY();
+
+    if (!isMobileAny()) {
+      setCollapsed(false);
+      lastScrollY = y;
+      return;
+    }
+
+    if (isHeaderLocked()) {
+      manualExpandedAtY = null;
+      setCollapsed(false);
+      lastScrollY = y;
+      return;
+    }
+
+    if (y <= TOP_EXPAND_Y) {
+      manualExpandedAtY = null;
+      setCollapsed(false);
+      lastScrollY = y;
+      return;
+    }
+
+    const scrollingDown = y > lastScrollY + 1;
+
+    if (collapsed) {
+      lastScrollY = y;
+      return;
+    }
+
+    if (manualExpandedAtY !== null) {
+      const collapseAfter = Math.max(COLLAPSE_SCROLL_Y, manualExpandedAtY + MANUAL_SCROLL_DELTA);
+      if (scrollingDown && y > collapseAfter) {
+        manualExpandedAtY = null;
+        setCollapsed(true);
+      }
+      lastScrollY = y;
+      return;
+    }
+
+    if (scrollingDown && y > COLLAPSE_SCROLL_Y) {
+      setCollapsed(true);
+    }
+
+    lastScrollY = y;
+  }
+
+  function onScroll() {
     if (scrollingRAF) return;
     scrollingRAF = requestAnimationFrame(() => {
       scrollingRAF = null;
-      applyHeaderVisibility();
+      refreshFromScroll();
     });
+  }
+
+  function bindScroll() {
+    const root = getHeaderScrollRoot();
+    if (unbindScroll) unbindScroll();
+    root.addEventListener("scroll", onScroll, { passive: true });
+    unbindScroll = () => root.removeEventListener("scroll", onScroll);
+    lastScrollY = getScrollY();
+    refreshFromScroll();
+  }
+
+  function finishDrag(event) {
+    const handle = getHandle();
+    window.removeEventListener("mousemove", onMouseMove);
+
+    if (dragState && event?.pointerId !== undefined) {
+      try {
+        handle?.releasePointerCapture(event.pointerId);
+      } catch (error) {
+        // The pointer may already be released by the browser.
+      }
+    }
+    dragState = null;
+
+    if (suppressNextClick) {
+      window.setTimeout(() => {
+        suppressNextClick = false;
+      }, 350);
+    }
+  }
+
+  function startDrag(clientY) {
+    if (!isMobileAny()) return;
+    dragState = {
+      startY: clientY,
+      startedCollapsed: collapsed
+    };
+  }
+
+  function updateDrag(clientY, event) {
+    if (!dragState || !isMobileAny()) return;
+
+    const deltaY = clientY - dragState.startY;
+
+    if (dragState.startedCollapsed && deltaY > DRAG_TRIGGER_Y) {
+      event?.preventDefault?.();
+      suppressNextClick = true;
+      expand({ manual: true });
+      finishDrag(event);
+      return;
+    }
+
+    if (!dragState.startedCollapsed && deltaY < -DRAG_TRIGGER_Y) {
+      event?.preventDefault?.();
+      suppressNextClick = true;
+      collapse({ manual: true });
+      finishDrag(event);
+    }
+  }
+
+  function onPointerDown(event) {
+    startDrag(event.clientY);
+    if (!dragState) return;
+
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } catch (error) {
+      // Pointer capture is a progressive enhancement for steadier dragging.
+    }
+  }
+
+  function onPointerMove(event) {
+    updateDrag(event.clientY, event);
+  }
+
+  function onMouseDown(event) {
+    if (event.button !== 0) return;
+    startDrag(event.clientY);
+    if (!dragState) return;
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp, { once: true });
+  }
+
+  function onMouseMove(event) {
+    updateDrag(event.clientY, event);
+  }
+
+  function onMouseUp(event) {
+    finishDrag(event);
+  }
+
+  function onTouchStart(event) {
+    const touch = event.touches?.[0];
+    if (!touch) return;
+    startDrag(touch.clientY);
+  }
+
+  function onTouchMove(event) {
+    const touch = event.touches?.[0];
+    if (!touch) return;
+    updateDrag(touch.clientY, event);
+  }
+
+  function onTouchEnd(event) {
+    finishDrag(event);
+  }
+
+  function onHandleClick() {
+    if (!isMobileAny()) return;
+
+    if (suppressNextClick) {
+      suppressNextClick = false;
+      return;
+    }
+
+    if (collapsed) {
+      expand({ manual: true });
+    } else {
+      collapse({ manual: true });
+    }
+  }
+
+  function bindHandle() {
+    if (handleBound) return;
+    const handle = getHandle();
+    if (!handle) return;
+
+    handle.addEventListener("click", onHandleClick);
+    handle.addEventListener("pointerdown", onPointerDown);
+    handle.addEventListener("pointermove", onPointerMove);
+    handle.addEventListener("pointerup", finishDrag);
+    handle.addEventListener("pointercancel", finishDrag);
+    handle.addEventListener("mousedown", onMouseDown);
+    handle.addEventListener("touchstart", onTouchStart, { passive: true });
+    handle.addEventListener("touchmove", onTouchMove, { passive: false });
+    handle.addEventListener("touchend", onTouchEnd);
+    handle.addEventListener("touchcancel", onTouchEnd);
+    handleBound = true;
+  }
+
+  function init() {
+    bindHandle();
+    setCollapsed(false);
+    bindScroll();
+  }
+
+  return {
+    init,
+    bindScroll,
+    refresh: refreshFromScroll,
+    expand,
+    collapse
   };
-  (bindAutoHideHeader._unbind || (()=>{}))();
-  root.addEventListener("scroll", onScroll, { passive: true });
-  bindAutoHideHeader._unbind = () => root.removeEventListener("scroll", onScroll);
-  lastScrollY = getScrollY();
-  applyHeaderVisibility();
+})();
+
+function applyHeaderVisibility() {
+  mobileHeaderPanel.refresh();
 }
+
+function bindAutoHideHeader() {
+  mobileHeaderPanel.bindScroll();
+}
+
+// =================================
+// DRAWER
+// =================================
 
 // =================================
 // UTILITIES
@@ -651,7 +922,7 @@ document.addEventListener("DOMContentLoaded", () => {
   syncDrawerMount();       // flytta in denna
   showEmptyState();        // din välkomstvy
   updateDrawerCount();     // initiera "(n)" direkt
-  bindAutoHideHeader();
+  mobileHeaderPanel.init();
 });
 
 document.getElementById("homeReset")?.addEventListener("click", (e) => {
@@ -843,9 +1114,7 @@ searchInput.addEventListener("keydown", function (event) {
 
 searchInput.addEventListener("focus", () => {
   headerLock = true; // håller headern synlig via isHeaderLocked()
-  // visa headern direkt
-  document.querySelector(".header-top")?.classList.remove("header-hidden");
-  document.documentElement.classList.remove("hdr-hidden");
+  mobileHeaderPanel.expand();
   // se till att fältet syns i landskap
   if (isMobileLandscape()) {
     setTimeout(() => {

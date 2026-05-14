@@ -81,7 +81,7 @@
 <body>
 <header class="header-top">
   <!-- HEADER / BRAND -->
-  <div class="header-shell">
+  <div class="header-shell" id="mobileHeaderPanel">
     <div class="brand-row">
       <span class="brand-mark-shell" role="img" aria-label="Kostplaneraren – bestickikon">
         <img
@@ -216,6 +216,35 @@
       </div>
     </form>
   </div>
+
+  <div class="mobile-collapsed-strip" aria-hidden="true">
+    <span class="mobile-collapsed-brand">
+      <span class="mobile-collapsed-mark-shell">
+        <img
+          class="mobile-collapsed-mark mobile-collapsed-mark--dark"
+          src="images/kp-cutlery-mark.png"
+          alt=""
+        />
+        <img
+          class="mobile-collapsed-mark mobile-collapsed-mark--light"
+          src="images/kp-icon-lightmode.png"
+          alt=""
+        />
+      </span>
+      <span class="mobile-collapsed-title"><span>Kost</span>planeraren.se</span>
+    </span>
+  </div>
+
+  <button
+    class="mobile-header-handle"
+    id="mobileHeaderHandle"
+    type="button"
+    aria-controls="mobileHeaderPanel"
+    aria-expanded="true"
+    aria-label="Dölj toppanelen"
+  >
+    <span class="mobile-header-handle-bar" aria-hidden="true"></span>
+  </button>
 
 </header>
 
