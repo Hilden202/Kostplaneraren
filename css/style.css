@@ -574,10 +574,9 @@ h3 {
 .main-right {
   position: sticky;
   top: calc(var(--header-h) + 16px);
-  height: calc(100vh - var(--header-h) - 28px);
-  margin-bottom: 24px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  height: auto;
+  margin-bottom: 0;
+  overflow: visible;
 }
 
 .right-inner {
@@ -949,6 +948,11 @@ h3 {
   padding: 18px 18px 14px;
   background: rgba(7, 17, 13, 0.94);
   border-bottom: 1px solid var(--border);
+}
+
+.main-right .sidebar-header {
+  /* Desktoppanelen ska följa sidans naturliga höjd; sticky inuti en egen scrollcontainer gav ett onödigt instängt slut. */
+  position: static;
 }
 
 .sidebar-header h3,
@@ -1356,8 +1360,8 @@ input[type="number"] {
 ================================= */
 .seo-text {
   width: min(100% - 28px, 900px);
-  margin: 52px auto 80px;
-  padding-top: 18px;
+  margin: 48px auto 0;
+  padding: 18px 0 44px;
   color: var(--text-soft);
   border-top: 1px solid rgba(221, 244, 222, 0.1);
 }
@@ -1413,6 +1417,7 @@ input[type="number"] {
     position: relative;
     top: auto;
     height: auto;
+    overflow: visible;
   }
 }
 
@@ -1847,6 +1852,12 @@ input[type="number"] {
     position: sticky;
     top: calc(var(--header-h) + 10px);
     height: calc(100vh - var(--header-h) - 16px);
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .main-right .sidebar-header {
+    position: sticky;
   }
 
   .mobile-drawer {

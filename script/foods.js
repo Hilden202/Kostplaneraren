@@ -127,11 +127,11 @@ function deriveLmvVersion(rawText) { //Denna fungerar inte just nu
 let currentList = [];
 let renderedCount = 0;
 let isAppending = false;
+let appendingVersion = null;
 let io = null;
 let sentinel = null;
 let dietFilter = { type: 'all' };
 let activeQuickFilter = null;
-let changingFromQuickFilter = false;
 
 const nutritionCache = new Map(); // cache för /naringsvarden per livsmedels-id
 const classCache = new Map();     // cache för /klassificeringar per livsmedels-id
@@ -253,33 +253,29 @@ function clearEmptyStates() {
 // =================================
 
 const dietSelect = document.getElementById('dietSelect');
+const DIET_FILTER_MAP = {
+  'alla':        'all',
+  'keto_x':      'keto3',
+  'lchf_strikt': 'lchf5',
+  'lchf_liberal':'lchf10',
+  'hogprotein':  'hp20',
+  'lag_fett':    'lowfat3',
+  'lag_mattat':  'lowsat1_5',
+  'medelhav':    'medelhav',
+  'lag_socker':  'sugar5',
+  'lag_salt':    'lowsalt0_3',
+  'fiberrik':    'fiber6',
+  'lag_energi':  'lowkcal80'
+};
+
+function setDietFilterFromValue(value) {
+  dietFilter = { type: DIET_FILTER_MAP[value] ?? 'all' };
+}
+
 dietSelect?.addEventListener('change', () => {
-
-  // 🔥 Endast om användaren ändrade dropdownen manuellt
-  if (!changingFromQuickFilter) {
-    activeQuickFilter = null;
-    document.querySelectorAll(".quick-filters button")
-      .forEach(b => b.classList.remove("is-active"));
-  }
-
-  const v = dietSelect.value;
-
-  const map = {
-    'alla':        'all',
-    'keto_x':      'keto3',
-    'lchf_strikt': 'lchf5',
-    'lchf_liberal':'lchf10',
-    'hogprotein':  'hp20',
-    'lag_fett':    'lowfat3',
-    'lag_mattat':  'lowsat1_5',
-    'medelhav':    'medelhav',
-    'lag_socker':  'sugar5',
-    'lag_salt':    'lowsalt0_3',
-    'fiberrik':    'fiber6',
-    'lag_energi':  'lowkcal80'
-  };
-
-  dietFilter = { type: map[v] ?? 'all' };
+  activeQuickFilter = null;
+  setActiveQuickFilter(null);
+  setDietFilterFromValue(dietSelect.value);
   doSearch(searchInput.value);
 });
 
@@ -720,6 +716,7 @@ function renderInit(list, version, signal) {
   currentList = list || [];
   renderedCount = 0;
   isAppending = false;
+  appendingVersion = null;
 
   clearEmptyStates();
 
@@ -757,10 +754,12 @@ function renderInit(list, version, signal) {
 }
 
 async function renderNextChunk(version, signal) {
+  if (version !== null && version !== currentSearchVersion) return;
   if (isAppending) return;
   if (renderedCount >= currentList.length) return;
 
   isAppending = true;
+  appendingVersion = version;
   // dölj knappen medan vi arbetar, så den inte “studsar”
   const btn = document.getElementById('loadMoreBtn');
   if (btn) btn.style.display = 'none';
@@ -772,8 +771,16 @@ async function renderNextChunk(version, signal) {
 
   // 🔑 Append bara nya kort – rör inte redan renderat
   const shownInChunk = await renderFoodCardsAppend(chunk, version, signal);
+  if (version !== null && version !== currentSearchVersion) {
+    if (appendingVersion === version) {
+      isAppending = false;
+      appendingVersion = null;
+    }
+    return;
+  }
   renderedCount = end;
   isAppending = false;
+  appendingVersion = null;
 
   clearEmptyStates();
 
@@ -935,7 +942,6 @@ document.getElementById("homeReset")?.addEventListener("click", (e) => {
   // 2. Reset filter-state
   dietFilter = { type: "all" };
   activeQuickFilter = null;
-  changingFromQuickFilter = false;
 
   // 3. Reset UI
   document.getElementById("dietSelect").value = "alla";
@@ -1011,6 +1017,11 @@ fetchAllFoods()
     // Om du vill återställa tom-state när data kommit första gången:
     if (!document.getElementById('resultsCards')) {
       showEmptyState();
+    }
+
+    // Om ett filter valdes innan grundlistan hann laddas behövdes tidigare ett nytt klick för att få resultat.
+    if (activeQuickFilter || lastSearchTerm || (dietFilter.type || "all") !== "all") {
+      doSearch(searchInput.value);
     }
   })
   .catch(err => console.error("Fel vid hämtning av alla livsmedel:", err));
@@ -1195,6 +1206,7 @@ function foodVisualHtml(food, groupName) {
 }
 
 async function renderFoodCardsAppend(data, version = null, signal = null) {
+  if (version !== null && version !== currentSearchVersion) return 0;
   const cardsRoot = document.getElementById('resultsCards') || nutritionOutput;
   const cardsWrap = document.getElementById('resultsCards');
   if (cardsWrap && cardsWrap.hasAttribute('hidden')) cardsWrap.removeAttribute('hidden');
@@ -1202,6 +1214,7 @@ async function renderFoodCardsAppend(data, version = null, signal = null) {
   let shownInChunk = 0;
   // Skelettkort
   for (const food of data) {
+    if (version !== null && version !== currentSearchVersion) return shownInChunk;
     const card = document.createElement("div");
     card.className = "food-card";
     card.id = `food-${food.id}`;
@@ -1322,6 +1335,7 @@ async function renderFoodCardsAppend(data, version = null, signal = null) {
 
       const groupName = classCache.get(food.id)
       ?? await fetchClassificationWithSignal(food.id, signal);
+      if (version !== null && version !== currentSearchVersion) return;
       classCache.set(food.id, groupName);
 
 
@@ -1840,12 +1854,9 @@ function adjustSelectedListHeight() {
     return;
   }
 
-  const gutter = 12; // liten luft
-  const hardCap = Math.max(0, containerHeight - summaryHeight - headerHeight - gutter);
-  const minUsableListHeight = selectedFoods.length ? 148 : 0;
-  const maxListHeight = Math.max(minUsableListHeight, hardCap);
-  list.style.maxHeight = (list.scrollHeight > maxListHeight ? maxListHeight : "none");
-  list.style.overflowY = "auto";
+  // Desktop hade en beräknad maxhöjd från viewporten, vilket gav intern scroll trots att sidan kunde växa naturligt.
+  list.style.maxHeight = "none";
+  list.style.overflowY = "visible";
 }
 
 // Scrolla för att ändra alla range-sliders (även de som skapas senare)
@@ -1874,34 +1885,26 @@ document.querySelectorAll(".quick-filters button").forEach(btn => {
   btn.addEventListener("click", () => {
     const filter = btn.dataset.filter;
     const select = document.getElementById("dietSelect");
+    clearTimeout(inputDebounce);
 
-    // 🔁 Klick på redan aktiv knapp → slå AV
+    // Klick på redan aktiv knapp: återställ både UI och filterstate direkt.
     if (activeQuickFilter === filter) {
       activeQuickFilter = null;
-
-      // reset UI
-      btn.classList.remove("is-active");
-      select.value = "alla";
+      setActiveQuickFilter(null);
+      if (select) select.value = "alla";
+      setDietFilterFromValue("alla");
       searchInput.value = "";
 
-      // visa empty state igen
       showEmptyState();
       return;
     }
 
-    // 🆕 Nytt filter → slå PÅ
+    // Nytt snabbfilter behöver inte gå via ett syntetiskt change-event; annars kan renderingen kännas ett klick sen.
     activeQuickFilter = filter;
-
-    // rensa tidigare aktiva knappar
-    document.querySelectorAll(".quick-filters button")
-      .forEach(b => b.classList.remove("is-active"));
-
-    btn.classList.add("is-active");
-
-    changingFromQuickFilter = true;
-    select.value = filter;
-    select.dispatchEvent(new Event("change"));
-    changingFromQuickFilter = false;
+    setActiveQuickFilter(filter);
+    if (select) select.value = filter;
+    setDietFilterFromValue(filter);
+    doSearch(searchInput.value);
   });
 });
 
