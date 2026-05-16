@@ -2,9 +2,11 @@
   const LMV_API_URL = "https://dataportal.livsmedelsverket.se/livsmedel/api/v1/livsmedel";
   const LOCAL_FOODS_URL = "/data/foods.json";
   const IMAGE_MANIFEST_URL = "/data/food-images.json";
+  const GITHUB_IMAGE_CONTENTS_URL = "https://api.github.com/repos/Hilden202/Kostplaneraren/contents/images/foods?ref=main";
   const IMAGE_DIR = "/images/foods";
   const IMAGE_EXTENSIONS = ["png", "PNG", "webp", "WEBP", "jpg", "JPG", "jpeg", "JPEG", "avif", "AVIF"];
   const CHECK_CONCURRENCY = 24;
+  const SCAN_RENDER_EVERY = 12;
 
   const elements = {
     list: document.getElementById("assetList"),
@@ -27,7 +29,7 @@
     search: "",
     checkRunId: 0,
     renderTimer: null,
-    imageManifest: null
+    imageIndex: null
   };
 
   function normalizeSlug(value) {
@@ -233,7 +235,7 @@
       records = parseCsv(text);
     }
 
-    setFoods(records, `Imported ${file.name}`);
+    await setFoods(records, `Imported ${file.name}`);
   }
 
   function imageCandidates(slug) {
@@ -251,7 +253,12 @@
     return path;
   }
 
-  function parseImageManifest(payload) {
+  function isSupportedImagePath(path) {
+    const extension = String(path || "").split(".").pop();
+    return IMAGE_EXTENSIONS.some((candidate) => candidate.toLowerCase() === extension?.toLowerCase());
+  }
+
+  function parseImageRecords(payload) {
     const records = Array.isArray(payload)
       ? payload
       : payload?.images || payload?.files || [];
@@ -261,21 +268,100 @@
         if (typeof item === "string") return normalizeImageManifestPath(item);
         return normalizeImageManifestPath(item?.path || item?.url || item?.name);
       })
-      .filter(Boolean));
+      .filter((path) => path && isSupportedImagePath(path)));
   }
 
-  async function loadImageManifest() {
-    try {
-      const response = await fetch(IMAGE_MANIFEST_URL, { cache: "no-store" });
+  async function fetchJson(url) {
+    const response = await fetch(url, { cache: "no-store" });
 
-      if (!response.ok) {
-        throw new Error(`Image manifest returned ${response.status}`);
-      }
-
-      state.imageManifest = parseImageManifest(await response.json());
-    } catch (error) {
-      state.imageManifest = null;
+    if (!response.ok) {
+      throw new Error(`${url} returned ${response.status}`);
     }
+
+    return response.json();
+  }
+
+  function cacheBusted(url) {
+    const separator = url.includes("?") ? "&" : "?";
+    return `${url}${separator}_assetScan=${Date.now()}`;
+  }
+
+  async function loadDirectoryImageIndex() {
+    const response = await fetch(cacheBusted(`${IMAGE_DIR}/`), { cache: "no-store" });
+
+    if (!response.ok) {
+      throw new Error(`Food image directory returned ${response.status}`);
+    }
+
+    const text = await response.text();
+    const document = new DOMParser().parseFromString(text, "text/html");
+    const paths = Array.from(document.querySelectorAll("a"))
+      .map((link) => {
+        const href = link.getAttribute("href") || "";
+        try {
+          return normalizeImageManifestPath(new URL(href, `${window.location.origin}${IMAGE_DIR}/`).pathname);
+        } catch (error) {
+          return "";
+        }
+      })
+      .filter((path) => path.startsWith(`${IMAGE_DIR}/`) && isSupportedImagePath(path));
+
+    if (paths.length === 0) {
+      throw new Error("No food images found in directory listing");
+    }
+
+    return new Set(paths);
+  }
+
+  async function loadGitHubImageIndex() {
+    const records = await fetchJson(cacheBusted(GITHUB_IMAGE_CONTENTS_URL));
+    const index = parseImageRecords(records);
+
+    if (index.size === 0) {
+      throw new Error("GitHub image listing was empty");
+    }
+
+    return index;
+  }
+
+  async function loadManifestImageIndex() {
+    const payload = await fetchJson(cacheBusted(IMAGE_MANIFEST_URL));
+    const index = parseImageRecords(payload);
+
+    if (index.size === 0) {
+      throw new Error("Image manifest was empty");
+    }
+
+    return index;
+  }
+
+  function isLocalHost() {
+    return ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
+  }
+
+  async function loadImageIndex() {
+    const loaders = isLocalHost()
+      ? [loadDirectoryImageIndex, loadGitHubImageIndex, loadManifestImageIndex]
+      : [loadGitHubImageIndex, loadManifestImageIndex];
+
+    for (const loader of loaders) {
+      try {
+        state.imageIndex = await loader();
+        return;
+      } catch (error) {
+        // Try the next source before falling back to URL probes.
+      }
+    }
+
+    state.imageIndex = null;
+  }
+
+  function delay(ms = 0) {
+    return new Promise((resolve) => window.setTimeout(resolve, ms));
+  }
+
+  async function waitForPaint() {
+    await new Promise((resolve) => window.requestAnimationFrame(resolve));
   }
 
   async function resourceExists(url, options = {}) {
@@ -312,8 +398,8 @@
   async function findMatchingImage(slug) {
     const candidates = imageCandidates(slug);
 
-    if (state.imageManifest) {
-      const match = candidates.find((url) => state.imageManifest.has(url));
+    if (state.imageIndex) {
+      const match = candidates.find((url) => state.imageIndex.has(url));
 
       return match
         ? { state: "completed", url: match }
@@ -333,11 +419,15 @@
     const runId = ++state.checkRunId;
     const slugs = Array.from(new Set(state.foods.map((food) => food.slug)));
     let nextIndex = 0;
+    let scannedCount = 0;
 
-    await loadImageManifest();
+    await loadImageIndex();
+
+    if (runId !== state.checkRunId) return;
 
     state.imageStatus = new Map(slugs.map((slug) => [slug, { state: "checking", url: null }]));
     render();
+    await waitForPaint();
 
     async function worker() {
       while (nextIndex < slugs.length && runId === state.checkRunId) {
@@ -347,7 +437,14 @@
         if (runId !== state.checkRunId) return;
 
         state.imageStatus.set(slug, status);
-        scheduleRender();
+        scannedCount++;
+
+        if (scannedCount % SCAN_RENDER_EVERY === 0) {
+          render();
+          await delay(16);
+        } else {
+          scheduleRender();
+        }
       }
     }
 
@@ -451,15 +548,18 @@
     state.renderTimer = window.setTimeout(render, 120);
   }
 
-  function setFoods(records, sourceLabel) {
+  async function setFoods(records, sourceLabel) {
     state.foods = normalizeFoodRecords(records);
     state.imageStatus.clear();
     state.search = elements.search.value;
 
     setSourceStatus(`${sourceLabel}: ${state.foods.length.toLocaleString("sv-SE")} foods`);
-    checkImages().catch((error) => {
+
+    try {
+      await checkImages();
+    } catch (error) {
       setSourceStatus(`Image check failed: ${error.message}`, true);
-    });
+    }
   }
 
   async function loadFromLivsmedelsverket() {
@@ -468,13 +568,13 @@
 
     try {
       const foods = await fetchAllFoods();
-      setFoods(foods, "Livsmedelsverket dataset");
+      await setFoods(foods, "Livsmedelsverket dataset");
     } catch (error) {
       setSourceStatus("Live API unavailable. Loading local foods.json fallback...");
 
       try {
         const foods = await fetchLocalFoods();
-        setFoods(foods, "Local foods.json fallback");
+        await setFoods(foods, "Local foods.json fallback");
         setSourceStatus(`Live API unavailable. Using local foods.json fallback. ${state.foods.length.toLocaleString("sv-SE")} foods loaded.`);
       } catch (fallbackError) {
         setSourceStatus(`Fetch failed: ${error.message}. Local fallback failed: ${fallbackError.message}`, true);
