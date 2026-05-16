@@ -67,6 +67,8 @@
   function foodGroup(source) {
     return source.group
       ?? source.Group
+      ?? source.category
+      ?? source.Category
       ?? source.grupp
       ?? source.Grupp
       ?? source.huvudgrupp
@@ -140,12 +142,14 @@
         const trimmedName = String(name).trim();
         const slug = normalizeSlug(source.slug || source.Slug || trimmedName);
         const group = String(foodGroup(source)).trim();
+        const category = String(source.category ?? source.Category ?? source.huvudgrupp ?? source.Huvudgrupp ?? "").trim();
 
         return {
           id: source.nummer ?? source.Nummer ?? source.id ?? source.Id ?? index + 1,
           name: trimmedName,
           slug,
-          group
+          group,
+          category
         };
       })
       .filter((food) => food.name && food.slug)
@@ -481,7 +485,8 @@
 
       return food.name.toLowerCase().includes(term)
         || food.slug.includes(term)
-        || food.group.toLowerCase().includes(term);
+        || food.group.toLowerCase().includes(term)
+        || food.category.toLowerCase().includes(term);
     });
   }
 
@@ -514,7 +519,12 @@
         : status.state === "missing"
           ? "Missing"
           : "Checking";
-      const meta = food.group ? `Group: ${food.group} | ID ${food.id}` : `ID ${food.id}`;
+      const metaParts = [
+        food.group ? `Group: ${food.group}` : "",
+        food.category ? `Category: ${food.category}` : "",
+        `ID ${food.id}`
+      ].filter(Boolean);
+      const meta = metaParts.join(" | ");
 
       return `
         <article class="asset-row" data-status="${escapeHtml(status.state)}">
