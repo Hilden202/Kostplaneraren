@@ -4,7 +4,7 @@
   const IMAGE_MANIFEST_URL = "/data/food-images.json";
   const GITHUB_IMAGE_CONTENTS_URL = "https://api.github.com/repos/Hilden202/Kostplaneraren/contents/images/foods?ref=main";
   const IMAGE_DIR = "/images/foods";
-  const IMAGE_EXTENSIONS = ["png", "PNG", "webp", "WEBP", "jpg", "JPG", "jpeg", "JPEG", "avif", "AVIF"];
+  const IMAGE_EXTENSIONS = ["webp", "WEBP", "png", "PNG", "jpg", "JPG", "jpeg", "JPEG", "avif", "AVIF"];
   const CHECK_CONCURRENCY = 24;
   const SCAN_RENDER_EVERY = 12;
 
