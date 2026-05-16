@@ -1,0 +1,22 @@
+{
+  "source": "Tracked food image files for the local asset dashboard.",
+  "images": [
+    "/images/foods/becel-lattmargarin-38.PNG",
+    "/images/foods/bregott-havssalt-80.PNG",
+    "/images/foods/bregott-mellan-60.PNG",
+    "/images/foods/gravlaxsas-kylvara.PNG",
+    "/images/foods/gris-ister.PNG",
+    "/images/foods/gris-spack.PNG",
+    "/images/foods/hovmastarsas-hemlagad.PNG",
+    "/images/foods/kokosfett.PNG",
+    "/images/foods/latt-och-lagom-40.PNG",
+    "/images/foods/majonnas-hemlagad-90.PNG",
+    "/images/foods/melba-hushallsmargarin-80.PNG",
+    "/images/foods/milda-culinesse-flytande-82.PNG",
+    "/images/foods/milda-hushallsmargarin-80.PNG",
+    "/images/foods/not-talg.PNG",
+    "/images/foods/remouladsas.PNG",
+    "/images/foods/sesamsas-gradde.PNG",
+    "/images/foods/vinagrett-45.PNG"
+  ]
+}

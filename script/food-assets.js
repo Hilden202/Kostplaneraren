@@ -1,8 +1,9 @@
 (function () {
   const LMV_API_URL = "https://dataportal.livsmedelsverket.se/livsmedel/api/v1/livsmedel";
   const LOCAL_FOODS_URL = "/data/foods.json";
+  const IMAGE_MANIFEST_URL = "/data/food-images.json";
   const IMAGE_DIR = "/images/foods";
-  const IMAGE_EXTENSIONS = ["webp", "jpg", "jpeg", "png", "avif"];
+  const IMAGE_EXTENSIONS = ["png", "PNG", "webp", "WEBP", "jpg", "JPG", "jpeg", "JPEG", "avif", "AVIF"];
   const CHECK_CONCURRENCY = 24;
 
   const elements = {
@@ -25,7 +26,8 @@
     filter: "all",
     search: "",
     checkRunId: 0,
-    renderTimer: null
+    renderTimer: null,
+    imageManifest: null
   };
 
   function normalizeSlug(value) {
@@ -238,29 +240,85 @@
     return IMAGE_EXTENSIONS.map((extension) => `${IMAGE_DIR}/${slug}.${extension}`);
   }
 
-  function probeImage(url) {
-    return new Promise((resolve) => {
-      const image = new Image();
-      let settled = false;
+  function normalizeImageManifestPath(value) {
+    const path = String(value || "").trim();
 
-      const finish = (found) => {
-        if (settled) return;
-        settled = true;
-        clearTimeout(timer);
-        image.onload = null;
-        image.onerror = null;
-        resolve(found);
-      };
+    if (!path) return "";
+    if (path.startsWith("/")) return path;
+    if (path.startsWith("images/")) return `/${path}`;
+    if (!path.includes("/")) return `${IMAGE_DIR}/${path}`;
 
-      const timer = window.setTimeout(() => finish(false), 3000);
-      image.onload = () => finish(true);
-      image.onerror = () => finish(false);
-      image.src = url;
-    });
+    return path;
+  }
+
+  function parseImageManifest(payload) {
+    const records = Array.isArray(payload)
+      ? payload
+      : payload?.images || payload?.files || [];
+
+    return new Set(records
+      .map((item) => {
+        if (typeof item === "string") return normalizeImageManifestPath(item);
+        return normalizeImageManifestPath(item?.path || item?.url || item?.name);
+      })
+      .filter(Boolean));
+  }
+
+  async function loadImageManifest() {
+    try {
+      const response = await fetch(IMAGE_MANIFEST_URL, { cache: "no-store" });
+
+      if (!response.ok) {
+        throw new Error(`Image manifest returned ${response.status}`);
+      }
+
+      state.imageManifest = parseImageManifest(await response.json());
+    } catch (error) {
+      state.imageManifest = null;
+    }
+  }
+
+  async function resourceExists(url, options = {}) {
+    try {
+      const response = await fetch(url, {
+        method: options.method || "HEAD",
+        cache: "no-store"
+      });
+
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async function probeImage(url) {
+    if (await resourceExists(url)) return true;
+
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        cache: "no-store",
+        headers: {
+          Range: "bytes=0-0"
+        }
+      });
+
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
   }
 
   async function findMatchingImage(slug) {
     const candidates = imageCandidates(slug);
+
+    if (state.imageManifest) {
+      const match = candidates.find((url) => state.imageManifest.has(url));
+
+      return match
+        ? { state: "completed", url: match }
+        : { state: "missing", url: null };
+    }
 
     for (const url of candidates) {
       if (await probeImage(url)) {
@@ -275,6 +333,8 @@
     const runId = ++state.checkRunId;
     const slugs = Array.from(new Set(state.foods.map((food) => food.slug)));
     let nextIndex = 0;
+
+    await loadImageManifest();
 
     state.imageStatus = new Map(slugs.map((slug) => [slug, { state: "checking", url: null }]));
     render();
