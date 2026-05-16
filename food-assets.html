@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Kostplaneraren Food Assets</title>
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="css/food-assets.css">
+</head>
+
+<body>
+  <header class="asset-header">
+    <div class="asset-header-inner">
+      <a class="brand-link" href="/" aria-label="Back to Kostplaneraren">
+        <img src="images/kp-cutlery-mark.png" alt="" class="brand-mark">
+        <span><strong>Kost</strong>planeraren</span>
+      </a>
+
+      <div class="asset-title">
+        <h1>Food asset checklist</h1>
+        <p id="sourceStatus" aria-live="polite">Loading Livsmedelsverket foods...</p>
+      </div>
+
+      <div class="header-actions">
+        <button class="secondary-button" id="refreshButton" type="button">Refresh</button>
+        <label class="secondary-button file-button" for="datasetImport">
+          Import
+          <input id="datasetImport" type="file" accept=".json,.csv,.txt,text/csv,application/json">
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <main class="asset-shell">
+    <section class="asset-controls" aria-label="Asset filters">
+      <div class="search-control">
+        <label for="assetSearch">Search</label>
+        <input id="assetSearch" type="search" autocomplete="off" placeholder="Food name or slug">
+      </div>
+
+      <div class="filter-tabs" aria-label="Image status">
+        <button class="filter-tab is-active" type="button" data-filter="all">All</button>
+        <button class="filter-tab" type="button" data-filter="missing">Missing images</button>
+        <button class="filter-tab" type="button" data-filter="completed">Completed</button>
+      </div>
+    </section>
+
+    <section class="asset-stats" aria-label="Asset status totals">
+      <div class="stat-card">
+        <span class="stat-label">Foods</span>
+        <strong id="totalCount">0</strong>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Completed</span>
+        <strong id="completedCount">0</strong>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Missing</span>
+        <strong id="missingCount">0</strong>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Checking</span>
+        <strong id="checkingCount">0</strong>
+      </div>
+    </section>
+
+    <section class="asset-list-shell">
+      <div class="list-header">
+        <span id="visibleCount">0 rows</span>
+        <span id="imagePathHint">/images/foods/&lt;slug&gt;.{webp,jpg,jpeg,png,avif}</span>
+      </div>
+
+      <div class="asset-list" id="assetList" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script src="script/food-assets.js"></script>
+</body>
+
+</html>

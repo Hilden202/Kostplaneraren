@@ -1,0 +1,80 @@
+{
+  "source": "Local Kostplaneraren food asset fallback. Replace with a full Livsmedelsverket export when API access is available.",
+  "foods": [
+    {
+      "name": "Becel lättmargarin 38%",
+      "slug": "becel-lattmargarin-38",
+      "group": ""
+    },
+    {
+      "name": "Bregott havssalt 80%",
+      "slug": "bregott-havssalt-80",
+      "group": ""
+    },
+    {
+      "name": "Bregott mellan 60%",
+      "slug": "bregott-mellan-60",
+      "group": ""
+    },
+    {
+      "name": "Gravlaxsås kylvara",
+      "slug": "gravlaxsas-kylvara",
+      "group": ""
+    },
+    {
+      "name": "Gris ister",
+      "slug": "gris-ister",
+      "group": ""
+    },
+    {
+      "name": "Gris späck",
+      "slug": "gris-spack",
+      "group": ""
+    },
+    {
+      "name": "Hovmästarsås hemlagad",
+      "slug": "hovmastarsas-hemlagad",
+      "group": ""
+    },
+    {
+      "name": "Kokosfett",
+      "slug": "kokosfett",
+      "group": ""
+    },
+    {
+      "name": "Lätt och lagom 40%",
+      "slug": "latt-och-lagom-40",
+      "group": ""
+    },
+    {
+      "name": "Majonnäs hemlagad 90%",
+      "slug": "majonnas-hemlagad-90",
+      "group": ""
+    },
+    {
+      "name": "Ägg kokt",
+      "slug": "agg-kokt",
+      "group": ""
+    },
+    {
+      "name": "Avokado",
+      "slug": "avokado",
+      "group": ""
+    },
+    {
+      "name": "Banan",
+      "slug": "banan",
+      "group": ""
+    },
+    {
+      "name": "Broccoli kokt",
+      "slug": "broccoli-kokt",
+      "group": ""
+    },
+    {
+      "name": "Kyckling bröstfilé stekt",
+      "slug": "kyckling-brostfile-stekt",
+      "group": ""
+    }
+  ]
+}
