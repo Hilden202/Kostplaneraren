@@ -1,11 +1,8 @@
 (function () {
   const LMV_API_URL = "https://dataportal.livsmedelsverket.se/livsmedel/api/v1/livsmedel";
   const LOCAL_FOODS_URL = "/data/foods.json";
-  const IMAGE_MANIFEST_URL = "/data/food-images.json";
-  const GITHUB_IMAGE_CONTENTS_URL = "https://api.github.com/repos/Hilden202/Kostplaneraren/contents/images/foods?ref=main";
-  const IMAGE_DIR = "/images/foods";
-  const IMAGE_EXTENSION_ORDER = ["webp", "png", "jpg", "jpeg", "avif"];
-  const IMAGE_EXTENSIONS = IMAGE_EXTENSION_ORDER.flatMap((extension) => [extension, extension.toUpperCase()]);
+  const FoodImages = window.KostFoodImages;
+  const IMAGE_DIR = FoodImages?.IMAGE_DIR || "/images/foods";
   const CHECK_CONCURRENCY = 24;
   const SCAN_RENDER_EVERY = 12;
 
@@ -20,6 +17,7 @@
     missingCount: document.getElementById("missingCount"),
     checkingCount: document.getElementById("checkingCount"),
     visibleCount: document.getElementById("visibleCount"),
+    progressRatio: document.getElementById("progressRatio"),
     filterTabs: Array.from(document.querySelectorAll(".filter-tab"))
   };
 
@@ -33,7 +31,7 @@
     imageIndex: null
   };
 
-  function normalizeSlug(value) {
+  const normalizeSlug = FoodImages?.normalizeSlug || function (value) {
     return String(value || "")
       .trim()
       .toLowerCase()
@@ -44,7 +42,7 @@
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "")
       .replace(/-{2,}/g, "-");
-  }
+  };
 
   function escapeHtml(value) {
     return String(value ?? "")
@@ -243,122 +241,12 @@
     await setFoods(records, `Imported ${file.name}`);
   }
 
-  function imageCandidates(slug) {
-    return IMAGE_EXTENSIONS.map((extension) => `${IMAGE_DIR}/${slug}.${extension}`);
-  }
-
-  function normalizeImageManifestPath(value) {
-    const path = String(value || "").trim();
-
-    if (!path) return "";
-    if (path.startsWith("/")) return path;
-    if (path.startsWith("images/")) return `/${path}`;
-    if (!path.includes("/")) return `${IMAGE_DIR}/${path}`;
-
-    return path;
-  }
-
-  function isSupportedImagePath(path) {
-    const extension = String(path || "").split(".").pop();
-    return IMAGE_EXTENSIONS.some((candidate) => candidate.toLowerCase() === extension?.toLowerCase());
-  }
-
-  function parseImageRecords(payload) {
-    const records = Array.isArray(payload)
-      ? payload
-      : payload?.images || payload?.files || [];
-
-    return new Set(records
-      .map((item) => {
-        if (typeof item === "string") return normalizeImageManifestPath(item);
-        return normalizeImageManifestPath(item?.path || item?.url || item?.name);
-      })
-      .filter((path) => path && isSupportedImagePath(path)));
-  }
-
-  async function fetchJson(url) {
-    const response = await fetch(url, { cache: "no-store" });
-
-    if (!response.ok) {
-      throw new Error(`${url} returned ${response.status}`);
-    }
-
-    return response.json();
-  }
-
-  function cacheBusted(url) {
-    const separator = url.includes("?") ? "&" : "?";
-    return `${url}${separator}_assetScan=${Date.now()}`;
-  }
-
-  async function loadDirectoryImageIndex() {
-    const response = await fetch(cacheBusted(`${IMAGE_DIR}/`), { cache: "no-store" });
-
-    if (!response.ok) {
-      throw new Error(`Food image directory returned ${response.status}`);
-    }
-
-    const text = await response.text();
-    const document = new DOMParser().parseFromString(text, "text/html");
-    const paths = Array.from(document.querySelectorAll("a"))
-      .map((link) => {
-        const href = link.getAttribute("href") || "";
-        try {
-          return normalizeImageManifestPath(new URL(href, `${window.location.origin}${IMAGE_DIR}/`).pathname);
-        } catch (error) {
-          return "";
-        }
-      })
-      .filter((path) => path.startsWith(`${IMAGE_DIR}/`) && isSupportedImagePath(path));
-
-    if (paths.length === 0) {
-      throw new Error("No food images found in directory listing");
-    }
-
-    return new Set(paths);
-  }
-
-  async function loadGitHubImageIndex() {
-    const records = await fetchJson(cacheBusted(GITHUB_IMAGE_CONTENTS_URL));
-    const index = parseImageRecords(records);
-
-    if (index.size === 0) {
-      throw new Error("GitHub image listing was empty");
-    }
-
-    return index;
-  }
-
-  async function loadManifestImageIndex() {
-    const payload = await fetchJson(cacheBusted(IMAGE_MANIFEST_URL));
-    const index = parseImageRecords(payload);
-
-    if (index.size === 0) {
-      throw new Error("Image manifest was empty");
-    }
-
-    return index;
-  }
-
-  function isLocalHost() {
-    return ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
-  }
-
   async function loadImageIndex() {
-    const loaders = isLocalHost()
-      ? [loadDirectoryImageIndex, loadGitHubImageIndex, loadManifestImageIndex]
-      : [loadGitHubImageIndex, loadManifestImageIndex];
-
-    for (const loader of loaders) {
-      try {
-        state.imageIndex = await loader();
-        return;
-      } catch (error) {
-        // Try the next source before falling back to URL probes.
-      }
+    if (!FoodImages) {
+      throw new Error("Skriptet för livsmedelsbilder saknas");
     }
 
-    state.imageIndex = null;
+    state.imageIndex = await FoodImages.loadImageIndex({ force: true, preferLive: true });
   }
 
   function delay(ms = 0) {
@@ -369,55 +257,9 @@
     await new Promise((resolve) => window.requestAnimationFrame(resolve));
   }
 
-  async function resourceExists(url, options = {}) {
-    try {
-      const response = await fetch(url, {
-        method: options.method || "HEAD",
-        cache: "no-store"
-      });
-
-      return response.ok;
-    } catch (error) {
-      return false;
-    }
-  }
-
-  async function probeImage(url) {
-    if (await resourceExists(url)) return true;
-
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        cache: "no-store",
-        headers: {
-          Range: "bytes=0-0"
-        }
-      });
-
-      return response.ok;
-    } catch (error) {
-      return false;
-    }
-  }
-
   async function findMatchingImage(slug) {
-    const candidates = imageCandidates(slug);
-
-    if (state.imageIndex) {
-      const match = candidates.find((url) => state.imageIndex.has(url));
-
-      return match
-        ? { state: "completed", url: match }
-        : { state: "missing", url: null };
-    }
-
-    for (const url of candidates) {
-      if (await probeImage(url)) {
-        return { state: "completed", url };
-      }
-    }
-
-    return { state: "missing", url: null };
+    const status = await FoodImages.findMatchingImage(slug, { index: state.imageIndex });
+    return { state: status.state, url: status.url };
   }
 
   async function checkImages() {
@@ -497,14 +339,41 @@
     elements.completedCount.textContent = totals.completed.toLocaleString("sv-SE");
     elements.missingCount.textContent = totals.missing.toLocaleString("sv-SE");
     elements.checkingCount.textContent = totals.checking.toLocaleString("sv-SE");
-    elements.visibleCount.textContent = `${visibleRows.toLocaleString("sv-SE")} rows`;
+    elements.visibleCount.textContent = `${visibleRows.toLocaleString("sv-SE")} rader`;
+    if (elements.progressRatio) {
+      elements.progressRatio.textContent = `${totals.completed.toLocaleString("sv-SE")} av ${state.foods.length.toLocaleString("sv-SE")}`;
+    }
+  }
+
+  function suggestionButton(food, status) {
+    if (status.state === "checking") return "";
+
+    const hasImage = status.state === "completed";
+    const label = hasImage ? "Föreslå bättre bild" : "Föreslå bild";
+    const icon = hasImage ? "fa-regular fa-image" : "fa-solid fa-wand-magic-sparkles";
+
+    return `
+      <button
+        class="suggest-image-button"
+        type="button"
+        data-suggest-image
+        data-food-name="${escapeHtml(food.name)}"
+        data-food-id="${escapeHtml(food.id)}"
+        data-slug="${escapeHtml(food.slug)}"
+        data-image-status="${escapeHtml(status.state)}"
+        data-image-url="${escapeHtml(status.url || "")}"
+      >
+        <i class="${icon}" aria-hidden="true"></i>
+        <span>${label}</span>
+      </button>
+    `;
   }
 
   function renderRows(foods) {
     if (foods.length === 0) {
       elements.list.innerHTML = state.foods.length
-        ? '<div class="empty-message">No foods match the current view.</div>'
-        : '<div class="empty-message">No food data loaded.</div>';
+        ? '<div class="empty-message">Inga livsmedel matchar filtreringen.</div>'
+        : '<div class="empty-message">Ingen livsmedelsdata laddad.</div>';
       return;
     }
 
@@ -512,16 +381,16 @@
       const status = getStatusForFood(food);
       const imageMarkup = status.url
         ? `<img class="asset-preview" src="${escapeHtml(status.url)}" alt="${escapeHtml(food.name)}" loading="lazy">`
-        : '<div class="preview-missing" aria-label="Missing image">Missing</div>';
+        : '<div class="preview-missing" aria-label="Bild saknas">Bild saknas</div>';
       const path = status.url || `${IMAGE_DIR}/${food.slug}.webp`;
       const statusLabel = status.state === "completed"
-        ? "Completed"
+        ? "Klar"
         : status.state === "missing"
-          ? "Missing"
-          : "Checking";
+          ? "Saknas"
+          : "Kontrollerar";
       const metaParts = [
-        food.group ? `Group: ${food.group}` : "",
-        food.category ? `Category: ${food.category}` : "",
+        food.group ? `Grupp: ${food.group}` : "",
+        food.category ? `Kategori: ${food.category}` : "",
         `ID ${food.id}`
       ].filter(Boolean);
       const meta = metaParts.join(" | ");
@@ -539,6 +408,7 @@
           </div>
           <div class="row-status">
             <span class="status-badge ${escapeHtml(status.state)}">${statusLabel}</span>
+            ${suggestionButton(food, status)}
           </div>
         </article>
       `;
@@ -564,31 +434,31 @@
     state.imageStatus.clear();
     state.search = elements.search.value;
 
-    setSourceStatus(`${sourceLabel}: ${state.foods.length.toLocaleString("sv-SE")} foods`);
+    setSourceStatus(`${sourceLabel}: ${state.foods.length.toLocaleString("sv-SE")} livsmedel`);
 
     try {
       await checkImages();
     } catch (error) {
-      setSourceStatus(`Image check failed: ${error.message}`, true);
+      setSourceStatus(`Bildkontrollen misslyckades: ${error.message}`, true);
     }
   }
 
   async function loadFromLivsmedelsverket() {
-    setSourceStatus("Loading Livsmedelsverket foods...");
+    setSourceStatus("Laddar livsmedel från Livsmedelsverket...");
     elements.refreshButton.disabled = true;
 
     try {
       const foods = await fetchAllFoods();
-      await setFoods(foods, "Livsmedelsverket dataset");
+      await setFoods(foods, "Livsmedelsverkets data");
     } catch (error) {
-      setSourceStatus("Live API unavailable. Loading local foods.json fallback...");
+      setSourceStatus("Live-API:t är inte tillgängligt. Laddar lokal foods.json...");
 
       try {
         const foods = await fetchLocalFoods();
-        await setFoods(foods, "Local foods.json fallback");
-        setSourceStatus(`Live API unavailable. Using local foods.json fallback. ${state.foods.length.toLocaleString("sv-SE")} foods loaded.`);
+        await setFoods(foods, "Lokal foods.json");
+        setSourceStatus(`Live-API:t är inte tillgängligt. Använder lokal foods.json. ${state.foods.length.toLocaleString("sv-SE")} livsmedel laddade.`);
       } catch (fallbackError) {
-        setSourceStatus(`Fetch failed: ${error.message}. Local fallback failed: ${fallbackError.message}`, true);
+        setSourceStatus(`Hämtningen misslyckades: ${error.message}. Lokal fallback misslyckades: ${fallbackError.message}`, true);
         render();
       }
     } finally {
@@ -618,7 +488,7 @@
     if (!file) return;
 
     importDataset(file).catch((error) => {
-      setSourceStatus(`Import failed: ${error.message}`, true);
+      setSourceStatus(`Importen misslyckades: ${error.message}`, true);
     }).finally(() => {
       elements.datasetImport.value = "";
     });

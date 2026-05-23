@@ -10,6 +10,7 @@ const DEFAULT_SLIDER_MAX = 1000;
 const mobileDrawer = document.getElementById("mobileDrawer");
 const drawerHandle = document.getElementById("drawerHandle");
 const drawerContent = document.getElementById("drawerContent");
+const FoodImages = window.KostFoodImages;
 
 // =================================
 // THEME
@@ -135,6 +136,7 @@ let activeQuickFilter = null;
 
 const nutritionCache = new Map(); // cache för /naringsvarden per livsmedels-id
 const classCache = new Map();     // cache för /klassificeringar per livsmedels-id
+const foodImageStatusCache = new Map();
 
 // Låsflagga för header (true medan sökfältet är i fokus)
 let headerLock = false;
@@ -204,6 +206,48 @@ function lvFoodUrl(id) {
   return `https://soknaringsinnehall.livsmedelsverket.se/Home/FoodDetails/${id}`;
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function formatProgressCount(completed, total) {
+  const completedText = completed.toLocaleString("sv-SE");
+  const totalText = total ? total.toLocaleString("sv-SE") : "";
+
+  return total
+    ? `${completedText} av ${totalText} bilder klara`
+    : `${completedText} bilder klara`;
+}
+
+async function updateImageProgressLink() {
+  const count = document.getElementById("foodImageProgressCount");
+  const meter = document.querySelector(".food-progress-meter span");
+
+  if (!count || !FoodImages) return;
+
+  try {
+    const index = await FoodImages.loadImageIndex();
+    const total = foodData.length;
+    const completed = total
+      ? foodData.reduce((sum, food) => {
+        const status = FoodImages.findMatchingImageInIndex(food, index);
+        return sum + (status.state === "completed" ? 1 : 0);
+      }, 0)
+      : FoodImages.countFoodImages(index);
+    const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    count.textContent = formatProgressCount(completed, total);
+    if (meter) meter.style.width = `${Math.min(percent, 100)}%`;
+  } catch (error) {
+    count.textContent = "Bildöversikten visas på projektsidan";
+  }
+}
+
 // =================================
 // EMPTY STATES
 // =================================
@@ -213,6 +257,16 @@ function showEmptyState() {
     <div id="emptyState" class="empty-state">
       <h2>Välkommen till Kostplaneraren</h2>
       <p>Skriv i sökfältet ovan för att börja. Exempel: <em>ägg</em>, <em>kyckling</em>, <em>broccoli</em>.</p>
+
+      <a class="food-progress-link" href="/food-assets.html">
+        <span class="food-progress-icon" aria-hidden="true"><i class="fa-regular fa-images"></i></span>
+        <span class="food-progress-copy">
+          <strong>Bildöversikt</strong>
+          <span id="foodImageProgressCount">Laddar bildöversikt...</span>
+          <span class="food-progress-note">Nya bilder läggs till löpande</span>
+          <span class="food-progress-meter" aria-hidden="true"><span></span></span>
+        </span>
+      </a>
 
       <hr class="empty-divider">
 
@@ -229,6 +283,7 @@ function showEmptyState() {
     <div class="loadmore-bar">
       <button id="loadMoreBtn" style="display:none;">Visa fler</button>
     </div>`;
+  updateImageProgressLink();
 }
 
 function showNoHits(term) {
@@ -1012,6 +1067,7 @@ async function fetchAllFoods() {
 fetchAllFoods()
   .then(list => {
     foodData = list;
+    updateImageProgressLink();
     
     // Låt tom-state ligga kvar tills användaren söker.
     // Om du vill återställa tom-state när data kommit första gången:
@@ -1167,9 +1223,8 @@ function buildFilterPredicate(filterType) {
   }
 }
 
-// Lightweight visual system for food cards. No network dependency, and future
-// real images can be added in FOOD_IMAGE_OVERRIDES without changing rendering.
-const FOOD_IMAGE_OVERRIDES = new Map();
+// Lightweight visual system for food cards. Real food images use the shared
+// asset manifest; category icons stay as the fallback when no image exists.
 const FOOD_VISUAL_CATEGORIES = [
   { key: 'eggs', label: 'Ägg', icon: 'fa-solid fa-egg', test: /(^|\W)(ägg|agg|egg)/i },
   { key: 'chicken', label: 'Fågel', icon: 'fa-solid fa-drumstick-bite', test: /kyckling|höns|hons|kalkon|fågel|fagel/i },
@@ -1189,15 +1244,93 @@ function getFoodVisual(food, groupName = '') {
     || { key: 'general', label: 'Livsmedel', icon: 'fa-solid fa-utensils' };
 }
 
-function foodVisualHtml(food, groupName) {
+function fallbackFoodSlug(food) {
+  return String(food?.namn || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[åä]/g, "a")
+    .replace(/ö/g, "o")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-");
+}
+
+function foodSlug(food) {
+  return FoodImages?.foodSlug(food) || fallbackFoodSlug(food);
+}
+
+async function getFoodImageStatus(food) {
+  const slug = foodSlug(food);
+  if (!slug) return { state: "missing", url: null, slug: "" };
+
+  if (!foodImageStatusCache.has(slug)) {
+    const statusPromise = FoodImages
+      ? FoodImages.findMatchingImage(slug)
+      : Promise.resolve({ state: "missing", url: null, slug });
+
+    foodImageStatusCache.set(slug, statusPromise);
+  }
+
+  try {
+    const status = await foodImageStatusCache.get(slug);
+    foodImageStatusCache.set(slug, status);
+    return status;
+  } catch (error) {
+    const fallback = { state: "missing", url: null, slug };
+    foodImageStatusCache.set(slug, fallback);
+    return fallback;
+  }
+}
+
+function suggestImageButtonHtml(food, imageStatus) {
+  const hasImage = imageStatus?.state === "completed" && imageStatus.url;
+  const label = hasImage ? "Föreslå bättre bild" : "Föreslå bild";
+  const icon = hasImage ? "fa-regular fa-image" : "fa-solid fa-wand-magic-sparkles";
+
+  return `
+    <button
+      class="food-image-suggest-button"
+      type="button"
+      data-suggest-image
+      data-food-name="${escapeHtml(food.namn)}"
+      data-food-id="${escapeHtml(food.id)}"
+      data-slug="${escapeHtml(imageStatus?.slug || foodSlug(food))}"
+      data-image-status="${escapeHtml(hasImage ? "completed" : "missing")}"
+      data-image-url="${escapeHtml(imageStatus?.url || "")}"
+    >
+      <i class="${icon}" aria-hidden="true"></i>
+      <span>${label}</span>
+    </button>
+  `;
+}
+
+function imageSuggestionHtml(food, imageStatus) {
+  const hasImage = imageStatus?.state === "completed" && imageStatus.url;
+  const stateLabel = hasImage ? "Bild finns" : "Bild saknas";
+  const icon = hasImage ? "fa-regular fa-circle-check" : "fa-solid fa-triangle-exclamation";
+
+  return `
+    <div class="food-image-suggestion ${hasImage ? "has-image" : "missing-image"}">
+      <span class="food-image-state">
+        <i class="${icon}" aria-hidden="true"></i>
+        ${stateLabel}
+      </span>
+      ${suggestImageButtonHtml(food, imageStatus)}
+    </div>
+  `;
+}
+
+function foodVisualHtml(food, groupName, imageStatus = null) {
   const visual = getFoodVisual(food, groupName);
-  const imageSrc = FOOD_IMAGE_OVERRIDES.get(food.id) || FOOD_IMAGE_OVERRIDES.get(String(food.id));
+  const imageSrc = imageStatus?.state === "completed" ? imageStatus.url : "";
   const imageHtml = imageSrc
-    ? `<img src="${imageSrc}" alt="" loading="lazy" decoding="async" onerror="this.hidden=true; this.parentElement.classList.add('image-failed');">`
+    ? `<img src="${escapeHtml(imageSrc)}" alt="" loading="lazy" decoding="async" onerror="this.remove(); this.closest('.food-visual')?.classList.remove('food-visual--has-image');">`
     : '';
 
   return `
-    <div class="food-visual food-visual--${visual.key}" aria-hidden="true">
+    <div class="food-visual food-visual--${visual.key}${imageSrc ? " food-visual--has-image" : ""}" aria-hidden="true">
       <span class="food-visual-icon"><i class="${visual.icon}" aria-hidden="true"></i></span>
       <span class="food-visual-label">${visual.label}</span>
       ${imageHtml}
@@ -1338,6 +1471,8 @@ async function renderFoodCardsAppend(data, version = null, signal = null) {
       if (version !== null && version !== currentSearchVersion) return;
       classCache.set(food.id, groupName);
 
+      const imageStatus = await getFoodImageStatus(food);
+      if (version !== null && version !== currentSearchVersion) return;
 
       const addedSugar_g = norm.added_sugar_g?.value ?? null;
       const freeSugar_g  = norm.free_sugar_g?.value  ?? null;
@@ -1370,13 +1505,14 @@ async function renderFoodCardsAppend(data, version = null, signal = null) {
       if (!card) return;
      
       card.innerHTML = `
-        ${foodVisualHtml(food, groupName)}
+        ${foodVisualHtml(food, groupName, imageStatus)}
         <div class="food-card-body">
           <div class="food-card-head">
             <h3>${food.namn} <small class="per100">per 100 g</small></h3>
             <span class="energy-pill">${energiKcal} kcal</span>
           </div>
           <p class="food-group">${groupName}</p>
+          ${imageSuggestionHtml(food, imageStatus)}
           <dl class="macro-grid">
             <div>
               <dt>Protein</dt>

@@ -28,7 +28,10 @@ body {
 
 body {
   margin: 0;
-  background: var(--bg);
+  background:
+    radial-gradient(circle at 12% -10%, rgba(121, 201, 87, 0.12), transparent 28rem),
+    radial-gradient(circle at 82% 0%, rgba(40, 183, 171, 0.1), transparent 26rem),
+    var(--bg);
   color: var(--text);
   font-family: Inter, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 15px;
@@ -116,11 +119,15 @@ a {
 .secondary-button,
 .filter-tab {
   min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface-soft);
   color: var(--text);
   padding: 8px 12px;
+  text-decoration: none;
 }
 
 .secondary-button:hover,
@@ -147,10 +154,97 @@ a {
   white-space: nowrap;
 }
 
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .asset-shell {
   width: min(100% - 32px, 1400px);
   margin: 0 auto;
   padding: 22px 0 48px;
+}
+
+.progress-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: end;
+  margin-bottom: 18px;
+  padding: clamp(18px, 3vw, 28px);
+  background: linear-gradient(135deg, rgba(16, 30, 25, 0.88), rgba(10, 21, 17, 0.76));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.hero-kicker {
+  margin: 0 0 7px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.progress-hero h2 {
+  max-width: 760px;
+  margin: 0;
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.progress-hero p:not(.hero-kicker) {
+  max-width: 720px;
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.hero-progress {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  width: max-content;
+  max-width: 100%;
+  padding: 8px 10px;
+  color: var(--text) !important;
+  background: rgba(121, 201, 87, 0.12);
+  border: 1px solid rgba(143, 211, 102, 0.24);
+  border-radius: var(--radius);
+}
+
+.hero-progress strong {
+  color: #dff7d7;
+  font-size: 20px;
+}
+
+.hero-suggest-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 10px 13px;
+  color: var(--text);
+  font-weight: 850;
+  text-decoration: none;
+  white-space: nowrap;
+  background: rgba(121, 201, 87, 0.16);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+}
+
+.hero-suggest-link:hover,
+.hero-suggest-link:focus-visible {
+  background: rgba(121, 201, 87, 0.24);
+  outline: none;
 }
 
 .asset-controls {
@@ -295,6 +389,8 @@ a {
   color: var(--soft);
   font-size: 11px;
   font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
   text-transform: uppercase;
 }
 
@@ -322,6 +418,12 @@ a {
 .slug-path {
   overflow-wrap: anywhere;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.row-status {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
 }
 
 .status-badge {
@@ -353,6 +455,29 @@ a {
   color: #ffd985;
 }
 
+.suggest-image-button {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 7px 10px;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.1;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.suggest-image-button:hover,
+.suggest-image-button:focus-visible {
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 3px rgba(121, 201, 87, 0.12);
+  outline: none;
+}
+
 .empty-message,
 .error-message {
   padding: 28px 18px;
@@ -360,6 +485,201 @@ a {
 }
 
 .error-message {
+  color: #ffb5aa;
+}
+
+.image-suggestion-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: min(12vh, 80px) 14px 6vh;
+  overflow: auto;
+  background: rgba(0, 0, 0, 0.66);
+  backdrop-filter: blur(8px);
+}
+
+.image-suggestion-modal[hidden] {
+  display: none;
+}
+
+.image-suggestion-dialog {
+  position: relative;
+  width: min(94vw, 540px);
+  padding: 22px;
+  color: var(--text);
+  background: linear-gradient(155deg, rgba(18, 33, 27, 0.98), rgba(8, 16, 13, 0.98));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.image-suggestion-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--muted);
+  font-size: 24px;
+  line-height: 1;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.image-suggestion-close:hover,
+.image-suggestion-close:focus-visible {
+  color: var(--text);
+  border-color: var(--border-strong);
+  outline: none;
+}
+
+.image-suggestion-form {
+  display: grid;
+  gap: 12px;
+}
+
+.image-suggestion-heading {
+  padding-right: 40px;
+}
+
+.image-suggestion-kicker {
+  margin: 0 0 4px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.image-suggestion-heading h2 {
+  margin: 0 0 6px;
+  font-size: clamp(23px, 4vw, 30px);
+  line-height: 1.1;
+}
+
+.image-suggestion-heading p:last-child {
+  margin: 0;
+  color: var(--muted);
+}
+
+.image-suggestion-form label {
+  display: grid;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.image-suggestion-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.65fr) minmax(0, 1.35fr);
+  gap: 10px;
+}
+
+.image-suggestion-form input[type="text"],
+.image-suggestion-form input[type="url"],
+.image-suggestion-form textarea {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 10px;
+  color: var(--text);
+  background: #0b1310;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  outline: none;
+}
+
+.image-suggestion-form textarea {
+  min-height: 86px;
+  resize: vertical;
+}
+
+.image-suggestion-form input:focus,
+.image-suggestion-form textarea:focus {
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 3px rgba(121, 201, 87, 0.12);
+}
+
+.image-suggestion-form input[readonly] {
+  color: var(--soft);
+}
+
+.optional {
+  color: var(--soft);
+  font-weight: 600;
+}
+
+.image-rights-check {
+  grid-template-columns: auto minmax(0, 1fr) !important;
+  align-items: start;
+  gap: 9px !important;
+  font-weight: 700 !important;
+}
+
+.image-rights-check input {
+  margin-top: 3px;
+  accent-color: var(--accent);
+}
+
+.image-suggestion-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.image-suggestion-submit,
+.image-suggestion-cancel {
+  min-height: 40px;
+  padding: 0 14px;
+  color: var(--text);
+  font-weight: 900;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.image-suggestion-submit {
+  background: rgba(121, 201, 87, 0.18);
+  border-color: var(--border-strong);
+}
+
+.image-suggestion-cancel {
+  color: var(--muted);
+}
+
+.image-suggestion-submit:hover,
+.image-suggestion-submit:focus-visible,
+.image-suggestion-cancel:hover,
+.image-suggestion-cancel:focus-visible {
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 3px rgba(121, 201, 87, 0.12);
+  outline: none;
+}
+
+.image-suggestion-submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.image-suggestion-status {
+  min-height: 18px;
+  margin: 0;
+  color: var(--soft);
+  font-size: 13px;
+}
+
+.image-suggestion-status.is-success {
+  color: #b9f7a2;
+}
+
+.image-suggestion-status.is-error {
   color: #ffb5aa;
 }
 
@@ -374,6 +694,10 @@ a {
   }
 
   .asset-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .progress-hero {
     grid-template-columns: 1fr;
   }
 
@@ -433,5 +757,24 @@ a {
 
   .stat-card strong {
     font-size: 24px;
+  }
+
+  .progress-hero h2 {
+    font-size: 28px;
+  }
+
+  .hero-suggest-link,
+  .image-suggestion-submit,
+  .image-suggestion-cancel {
+    width: 100%;
+  }
+
+  .image-suggestion-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .image-suggestion-actions {
+    align-items: stretch;
+    flex-direction: column;
   }
 }
