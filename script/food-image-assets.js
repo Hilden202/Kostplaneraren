@@ -8,7 +8,8 @@
   const state = {
     imageIndex: null,
     imageIndexPromise: null,
-    loadKey: ""
+    loadKey: "",
+    lookupCache: new WeakMap()
   };
 
   function normalizeSlug(value) {
@@ -232,7 +233,7 @@
   function findMatchingImageInIndex(value, index) {
     const slug = foodSlug(value);
     const candidates = imageCandidates(slug);
-    const match = candidates.find((url) => index?.has(url));
+    const match = candidates.find((url) => index?.has(url)) || imageLookup(index).get(slug);
 
     return match
       ? { state: "completed", url: match, slug }
@@ -271,12 +272,40 @@
     return normalizeSlug(basename);
   }
 
+  function imageLookup(index = state.imageIndex) {
+    if (!index) return new Map();
+
+    const cached = state.lookupCache.get(index);
+    if (cached) return cached;
+
+    const lookup = new Map();
+
+    for (const path of index) {
+      const slug = imageSlugFromPath(path);
+      if (slug && !lookup.has(slug)) {
+        lookup.set(slug, path);
+      }
+    }
+
+    state.lookupCache.set(index, lookup);
+    return lookup;
+  }
+
+  function imageTotalsForFoods(foods = [], index = state.imageIndex) {
+    const totals = { completed: 0, missing: 0, checking: 0 };
+
+    for (const food of foods) {
+      const status = findMatchingImageInIndex(food, index).state;
+      totals[status] = (totals[status] || 0) + 1;
+    }
+
+    return totals;
+  }
+
   function countFoodImages(index = state.imageIndex) {
     if (!index) return 0;
 
-    return new Set(Array.from(index)
-      .map(imageSlugFromPath)
-      .filter(Boolean)).size;
+    return imageLookup(index).size;
   }
 
   async function getProgress(totalFoods = 0, options = {}) {
@@ -286,6 +315,15 @@
     const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
 
     return { completed, total, percent };
+  }
+
+  async function getFoodImageProgress(foods = [], options = {}) {
+    const index = options.index ?? await loadImageIndex(options);
+    const totals = imageTotalsForFoods(foods, index);
+    const total = foods.length;
+    const percent = total > 0 ? Math.round((totals.completed / total) * 100) : 0;
+
+    return { ...totals, total, percent, index };
   }
 
   window.KostFoodImages = Object.freeze({
@@ -300,9 +338,12 @@
     isSupportedImagePath,
     parseImageRecords,
     loadImageIndex,
+    imageLookup,
+    imageTotalsForFoods,
     findMatchingImage,
     findMatchingImageInIndex,
     countFoodImages,
-    getProgress
+    getProgress,
+    getFoodImageProgress
   });
 }());

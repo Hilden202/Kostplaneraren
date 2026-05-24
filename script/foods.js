@@ -231,18 +231,10 @@ async function updateImageProgressLink() {
   if (!count || !FoodImages) return;
 
   try {
-    const index = await FoodImages.loadImageIndex();
-    const total = foodData.length;
-    const completed = total
-      ? foodData.reduce((sum, food) => {
-        const status = FoodImages.findMatchingImageInIndex(food, index);
-        return sum + (status.state === "completed" ? 1 : 0);
-      }, 0)
-      : FoodImages.countFoodImages(index);
-    const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+    const progress = await FoodImages.getFoodImageProgress(foodData, { preferLive: true });
 
-    count.textContent = formatProgressCount(completed, total);
-    if (meter) meter.style.width = `${Math.min(percent, 100)}%`;
+    count.textContent = formatProgressCount(progress.completed, progress.total);
+    if (meter) meter.style.width = `${Math.min(progress.percent, 100)}%`;
   } catch (error) {
     count.textContent = "Bildöversikten visas på projektsidan";
   }
