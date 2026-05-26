@@ -250,15 +250,27 @@ function showEmptyState() {
       <h2>Välkommen till Kostplaneraren</h2>
       <p>Skriv i sökfältet ovan för att börja. Exempel: <em>ägg</em>, <em>kyckling</em>, <em>broccoli</em>.</p>
 
-      <a class="food-progress-link" href="/food-assets.html">
-        <span class="food-progress-icon" aria-hidden="true"><i class="fa-regular fa-images"></i></span>
-        <span class="food-progress-copy">
-          <strong>Bildöversikt</strong>
-          <span id="foodImageProgressCount">Laddar bildöversikt...</span>
-          <span class="food-progress-note">Nya bilder läggs till löpande</span>
-          <span class="food-progress-meter" aria-hidden="true"><span></span></span>
-        </span>
-      </a>
+      <div class="empty-action-grid" aria-label="Relaterade länkar">
+        <a class="food-progress-link" href="/food-assets.html">
+          <span class="food-progress-icon" aria-hidden="true"><i class="fa-regular fa-images"></i></span>
+          <span class="food-progress-copy">
+            <strong>Bildöversikt</strong>
+            <span id="foodImageProgressCount">Laddar bildöversikt...</span>
+            <span class="food-progress-note">Nya bilder läggs till löpande</span>
+            <span class="food-progress-meter" aria-hidden="true"><span></span></span>
+          </span>
+        </a>
+
+        <a class="calorie-game-link" href="https://calorie-game.lovable.app/" target="_blank" rel="noopener">
+          <span class="calorie-game-icon" aria-hidden="true"><i class="fa-solid fa-gamepad"></i></span>
+          <span class="calorie-game-copy">
+            <strong>Gissa kalorier</strong>
+            <span>Testa ett litet spel med livsmedlen och bilderna härifrån</span>
+            <span class="calorie-game-note">Hur bra är din kcal-känsla?</span>
+          </span>
+          <i class="fa-solid fa-arrow-up-right-from-square calorie-game-external" aria-hidden="true"></i>
+        </a>
+      </div>
 
       <hr class="empty-divider">
 

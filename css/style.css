@@ -641,13 +641,20 @@ h3 {
   font-style: italic;
 }
 
-.food-progress-link {
+.empty-action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 900px;
+  margin: 18px 0 0;
+}
+
+.food-progress-link,
+.calorie-game-link {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 12px;
   align-items: center;
-  max-width: 520px;
-  margin: 18px 0 0;
   padding: 13px;
   color: var(--text);
   text-decoration: none;
@@ -657,15 +664,27 @@ h3 {
   transition: var(--transition-theme), transform 0.16s ease, box-shadow 0.18s ease;
 }
 
+.calorie-game-link {
+  position: relative;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--amber) 18%, transparent), transparent 60%),
+    color-mix(in srgb, var(--cyan) 12%, var(--surface-soft));
+}
+
 .food-progress-link:hover,
-.food-progress-link:focus-visible {
+.food-progress-link:focus-visible,
+.calorie-game-link:hover,
+.calorie-game-link:focus-visible {
   border-color: var(--border-strong);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
   outline: none;
   transform: translateY(-1px);
 }
 
-.food-progress-icon {
+.food-progress-icon,
+.calorie-game-icon {
   width: 42px;
   height: 42px;
   display: grid;
@@ -676,25 +695,40 @@ h3 {
   border-radius: var(--radius);
 }
 
-.food-progress-copy {
+.calorie-game-icon {
+  background: color-mix(in srgb, var(--amber) 24%, transparent);
+  border-color: color-mix(in srgb, var(--amber) 34%, transparent);
+}
+
+.food-progress-copy,
+.calorie-game-copy {
   min-width: 0;
   display: grid;
   gap: 4px;
 }
 
-.food-progress-copy strong {
+.food-progress-copy strong,
+.calorie-game-copy strong {
   color: var(--text);
   line-height: 1.2;
 }
 
-#foodImageProgressCount {
+#foodImageProgressCount,
+.calorie-game-copy span {
   color: var(--text-muted);
   font-size: 13px;
 }
 
-.food-progress-note {
+.food-progress-note,
+.calorie-game-note {
   color: var(--text-soft);
   font-size: 12px;
+}
+
+.calorie-game-external {
+  align-self: start;
+  color: var(--text-soft);
+  font-size: 13px;
 }
 
 .food-progress-meter {
@@ -1989,6 +2023,10 @@ input[type="number"] {
     padding: 9px 10px;
   }
 
+  .empty-action-grid {
+    grid-template-columns: 1fr;
+  }
+
   .diet-filter {
     width: 100%;
     min-width: 0;
@@ -2366,6 +2404,7 @@ input[type="number"],
 .site-credits,
 .source-note,
 .site-disclaimer,
+.calorie-game-external,
 .per100,
 .modal-source,
 .summary-meta {
