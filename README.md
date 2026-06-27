@@ -1,6 +1,6 @@
 <!-- kostplaneraren banner -->
 <div align="left">
-  <a href="https://kostplaneraren.se" target="_blank">
+  <a href="https://kostplaneraren.hildenmedia.se" target="_blank">
     <img
       height="220"
       src="https://raw.githubusercontent.com/Hilden202/HildenMedia/main/images/kostplaneraren-banner.png"
@@ -12,7 +12,7 @@
 # Kostplaneraren 🥗
 Planera måltider med näringsdata från Livsmedelsverkets öppna API.
 
-🔗 Live: https://kostplaneraren.se
+🔗 Live: https://kostplaneraren.hildenmedia.se
 
 ---
 
