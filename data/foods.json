@@ -1,7 +1,7 @@
 {
   "source": "Livsmedelsverket Livsmedelsdatabas",
-  "generatedAt": "2026-05-16T23:26:32.417Z",
-  "expectedFoodCount": 2575,
+  "generatedAt": "2026-08-22T23:31:44.808Z",
+  "expectedFoodCount": 2606,
   "foods": [
     {
       "id": 1305,
@@ -119,6 +119,13 @@
       "id": 550,
       "name": "Ananas",
       "slug": "ananas",
+      "group": "Frukt och bär",
+      "category": "Frukt färsk fryst"
+    },
+    {
+      "id": 4225,
+      "name": "Ananas frysvara",
+      "slug": "ananas-frysvara",
       "group": "Frukt och bär",
       "category": "Frukt färsk fryst"
     },
@@ -354,6 +361,13 @@
       "category": "Grönsaker"
     },
     {
+      "id": 5975,
+      "name": "Avokado frysvara",
+      "slug": "avokado-frysvara",
+      "group": "Grönsaker och svamp",
+      "category": "Grönsaker"
+    },
+    {
       "id": 745,
       "name": "Bagel m. rökt lax färskost sallad",
       "slug": "bagel-m-rokt-lax-farskost-sallad",
@@ -491,7 +505,7 @@
       "name": "Bar energibar m. choklad nötter",
       "slug": "bar-energibar-m-choklad-notter",
       "group": "Choklad eller chokladprodukt",
-      "category": "Frukt o nötblandningar bars"
+      "category": "Bars proteinbar muslibar mm"
     },
     {
       "id": 2061,
@@ -505,14 +519,14 @@
       "name": "Bar müslibar fullkorn m. röd frukt berikad",
       "slug": "bar-muslibar-fullkorn-m-rod-frukt-berikad",
       "group": "Spannmål och spannmålsprodukter",
-      "category": "Frukt o nötblandningar bars"
+      "category": "Bars proteinbar muslibar mm"
     },
     {
       "id": 2072,
       "name": "Bar müslibar m. choklad berikad",
       "slug": "bar-muslibar-m-choklad-berikad",
       "group": "Spannmål och spannmålsprodukter",
-      "category": "Frukt o nötblandningar bars"
+      "category": "Bars proteinbar muslibar mm"
     },
     {
       "id": 6239,
@@ -1054,6 +1068,13 @@
       "category": "Äggprodukter o rätter"
     },
     {
+      "id": 5085,
+      "name": "Bordsmargarin fett 60% berikad typ Flora original",
+      "slug": "bordsmargarin-fett-60-berikad-typ-flora-original",
+      "group": "Vegetabiliskt fett och olja",
+      "category": "Hård matfettsblandning"
+    },
+    {
       "id": 4107,
       "name": "Bordsmargarin fett 60% berikad typ Ica Basic",
       "slug": "bordsmargarin-fett-60-berikad-typ-ica-basic",
@@ -1062,15 +1083,22 @@
     },
     {
       "id": 2490,
-      "name": "Bordsmargarin fett 70% berikad typ Becel Gold",
-      "slug": "bordsmargarin-fett-70-berikad-typ-becel-gold",
+      "name": "Bordsmargarin fett 75% berikad typ Becel Gold",
+      "slug": "bordsmargarin-fett-75-berikad-typ-becel-gold",
       "group": "Margarin och blandade fetter",
       "category": "Hård matfettsblandning"
     },
     {
-      "id": 5085,
-      "name": "Bordsmargarin fett 80% berikad typ Flora original",
-      "slug": "bordsmargarin-fett-80-berikad-typ-flora-original",
+      "id": 7270,
+      "name": "Bordsmargarin fett 79% typ Plant b*tter",
+      "slug": "bordsmargarin-fett-79-typ-plant-b-tter",
+      "group": "Vegetabiliskt fett och olja",
+      "category": "Hård matfettsblandning"
+    },
+    {
+      "id": 7271,
+      "name": "Bordsmargarin fett 91% typ BreOliv",
+      "slug": "bordsmargarin-fett-91-typ-breoliv",
       "group": "Vegetabiliskt fett och olja",
       "category": "Hård matfettsblandning"
     },
@@ -1576,7 +1604,7 @@
       "name": "Brödkrutonger",
       "slug": "brodkrutonger",
       "group": "Övriga bröd",
-      "category": "Mjukt bröd"
+      "category": "Smörgåskex"
     },
     {
       "id": 113,
@@ -1705,6 +1733,27 @@
       "category": "Pizza paj pirog färdig smörgås"
     },
     {
+      "id": 2818,
+      "name": "Café au lait",
+      "slug": "cafe-au-lait",
+      "group": "Kaffe, te och kakao",
+      "category": "Kaffe te med mjölk"
+    },
+    {
+      "id": 2816,
+      "name": "Caffe latte",
+      "slug": "caffe-latte",
+      "group": "Kaffe, te och kakao",
+      "category": "Kaffe te med mjölk"
+    },
+    {
+      "id": 2819,
+      "name": "Cappuccino",
+      "slug": "cappuccino",
+      "group": "Kaffe, te och kakao",
+      "category": "Kaffe te med mjölk"
+    },
+    {
       "id": 2570,
       "name": "Carambole stjärnfrukt",
       "slug": "carambole-stjarnfrukt",
@@ -1731,6 +1780,13 @@
       "slug": "cashewnotter-rostade-u-salt",
       "group": "Nöt eller frö produkt",
       "category": "Nötter frön"
+    },
+    {
+      "id": 4057,
+      "name": "Chai latte",
+      "slug": "chai-latte",
+      "group": "Kaffe, te och kakao",
+      "category": "Kaffe te med mjölk"
     },
     {
       "id": 333,
@@ -2111,6 +2167,13 @@
       "category": "Bullar kakor tårtor mm"
     },
     {
+      "id": 7293,
+      "name": "Cortado",
+      "slug": "cortado",
+      "group": "Kaffe, te och kakao",
+      "category": "Kaffe te med mjölk"
+    },
+    {
       "id": 831,
       "name": "Couscous",
       "slug": "couscous",
@@ -2388,21 +2451,21 @@
       "name": "Drickyoghurt smaksatt fett ca 1%",
       "slug": "drickyoghurt-smaksatt-fett-ca-1",
       "group": "Fil och yoghurt",
-      "category": "Mjölkdryck chokladdryck milkshake smothie m yoghurt"
+      "category": "Smaksatt fil yoghurt"
     },
     {
       "id": 6093,
       "name": "Drickyoghurt smaksatt fett ca 1% socker ca 11%",
       "slug": "drickyoghurt-smaksatt-fett-ca-1-socker-ca-11",
       "group": "Fil och yoghurt",
-      "category": "Mjölkdryck chokladdryck milkshake smothie m yoghurt"
+      "category": "Smaksatt fil yoghurt"
     },
     {
       "id": 6092,
       "name": "Drickyoghurt smaksatt fett ca 1% socker ca 8%",
       "slug": "drickyoghurt-smaksatt-fett-ca-1-socker-ca-8",
       "group": "Fil och yoghurt",
-      "category": "Mjölkdryck chokladdryck milkshake smothie m yoghurt"
+      "category": "Smaksatt fil yoghurt"
     },
     {
       "id": 7235,
@@ -2483,9 +2546,9 @@
     },
     {
       "id": 2302,
-      "name": "Energidryck berikad",
-      "slug": "energidryck-berikad",
-      "group": "Läsk",
+      "name": "Energidryck m. socker berikad",
+      "slug": "energidryck-m-socker-berikad",
+      "group": "Dryck utan alkohol",
       "category": "Sportdrycker energidrycker"
     },
     {
@@ -2881,6 +2944,13 @@
       "category": "Senap ketchup HP-sås soja \"smaksättare\""
     },
     {
+      "id": 7295,
+      "name": "Flat white",
+      "slug": "flat-white",
+      "group": "Kaffe, te och kakao",
+      "category": "Kaffe te med mjölk"
+    },
+    {
       "id": 1242,
       "name": "Flundra rå",
       "slug": "flundra-ra",
@@ -2895,9 +2965,23 @@
       "category": "Fågelprodukter fågelrätter"
     },
     {
+      "id": 7165,
+      "name": "Flytande margarin fett 70%",
+      "slug": "flytande-margarin-fett-70",
+      "group": "Margarin och blandade fetter",
+      "category": "Flytande matfettsblandning"
+    },
+    {
+      "id": 7252,
+      "name": "Flytande margarin fett 70% berikad",
+      "slug": "flytande-margarin-fett-70-berikad",
+      "group": "Margarin och blandade fetter",
+      "category": "Flytande matfettsblandning"
+    },
+    {
       "id": 2474,
-      "name": "Flytande margarin fett 79% berikad typ Becel",
-      "slug": "flytande-margarin-fett-79-berikad-typ-becel",
+      "name": "Flytande margarin fett 76% berikad typ Becel",
+      "slug": "flytande-margarin-fett-76-berikad-typ-becel",
       "group": "Margarin och blandade fetter",
       "category": "Flytande matfettsblandning"
     },
@@ -2910,9 +2994,16 @@
     },
     {
       "id": 2401,
-      "name": "Flytande margarin mjölkfri fett 80% berikad typ Carlshamn",
-      "slug": "flytande-margarin-mjolkfri-fett-80-berikad-typ-carlshamn",
+      "name": "Flytande margarin mjölkfri fett 80% berikad",
+      "slug": "flytande-margarin-mjolkfri-fett-80-berikad",
       "group": "Vegetabiliskt fett och olja",
+      "category": "Flytande matfettsblandning"
+    },
+    {
+      "id": 6328,
+      "name": "Flytande matfettsblandning fett 80% berikad",
+      "slug": "flytande-matfettsblandning-fett-80-berikad",
+      "group": "Margarin och blandade fetter",
       "category": "Flytande matfettsblandning"
     },
     {
@@ -3291,7 +3382,7 @@
       "name": "Fruktdryck m. kolsyra",
       "slug": "fruktdryck-m-kolsyra",
       "group": "Vatten",
-      "category": ""
+      "category": "Vatten mineralvatten"
     },
     {
       "id": 2301,
@@ -3530,6 +3621,13 @@
       "slug": "farsruta-m-fetaost-ugnsstekt",
       "group": "Rött kött",
       "category": "Köttprodukter kötträtter"
+    },
+    {
+      "id": 2185,
+      "name": "Galiamelon",
+      "slug": "galiamelon",
+      "group": "Frukt och bär",
+      "category": "Frukt färsk fryst"
     },
     {
       "id": 1219,
@@ -4550,7 +4648,7 @@
       "id": 6455,
       "name": "Gryta chiligryta m. bönor linser sojakorv veg.",
       "slug": "gryta-chiligryta-m-bonor-linser-sojakorv-veg",
-      "group": "Grönsaksrätter",
+      "group": "Baljväxträtter",
       "category": "Grönsaks- rotfrukts- baljväxträtter o produkter"
     },
     {
@@ -4778,13 +4876,6 @@
       "category": "Inälvor organ produkter o rätter"
     },
     {
-      "id": 6943,
-      "name": "Gryta m. kött kyckling typ tapsi",
-      "slug": "gryta-m-kott-kyckling-typ-tapsi",
-      "group": "Kötträtt",
-      "category": "Köttprodukter kötträtter"
-    },
-    {
       "id": 6387,
       "name": "Gryta mormors kycklinggryta m. svamp",
       "slug": "gryta-mormors-kycklinggryta-m-svamp",
@@ -4866,7 +4957,7 @@
       "name": "Gräddersättning pulver fett 35%",
       "slug": "graddersattning-pulver-fett-35",
       "group": "Vegetabiliska mejeriprodukter",
-      "category": "Grädde creme fraiche"
+      "category": "Vegetabiliska produkter och mjölkersättning"
     },
     {
       "id": 1713,
@@ -5492,6 +5583,13 @@
       "category": "Bär färska frysta"
     },
     {
+      "id": 3759,
+      "name": "Hallon importerade",
+      "slug": "hallon-importerade",
+      "group": "Frukt och bär",
+      "category": "Bär färska frysta"
+    },
+    {
       "id": 524,
       "name": "Hallon m. socker frysvara",
       "slug": "hallon-m-socker-frysvara",
@@ -6018,8 +6116,8 @@
     },
     {
       "id": 4112,
-      "name": "Hushållsmargarin fett 80% berikad typ ICA",
-      "slug": "hushallsmargarin-fett-80-berikad-typ-ica",
+      "name": "Hushållsmargarin fett 80% berikad",
+      "slug": "hushallsmargarin-fett-80-berikad",
       "group": "Margarin och blandade fetter",
       "category": "Hård matfettsblandning"
     },
@@ -6032,8 +6130,15 @@
     },
     {
       "id": 13,
-      "name": "Hushållsmargarin fett 80% berikad typ Milda",
-      "slug": "hushallsmargarin-fett-80-berikad-typ-milda",
+      "name": "Hushållsmargarin fett ca 80% berikad typ Milda",
+      "slug": "hushallsmargarin-fett-ca-80-berikad-typ-milda",
+      "group": "Margarin och blandade fetter",
+      "category": "Hård matfettsblandning"
+    },
+    {
+      "id": 6837,
+      "name": "Hushållsmargarin mjölkfri fett 80% berikad",
+      "slug": "hushallsmargarin-mjolkfri-fett-80-berikad",
       "group": "Margarin och blandade fetter",
       "category": "Hård matfettsblandning"
     },
@@ -6041,13 +6146,6 @@
       "id": 2404,
       "name": "Hushållsmargarin mjölkfri fett 80% berikad typ Carlshamn",
       "slug": "hushallsmargarin-mjolkfri-fett-80-berikad-typ-carlshamn",
-      "group": "Margarin och blandade fetter",
-      "category": "Hård matfettsblandning"
-    },
-    {
-      "id": 4095,
-      "name": "Hushållsmargarin mjölkfri fett 80% berikad typ Milda",
-      "slug": "hushallsmargarin-mjolkfri-fett-80-berikad-typ-milda",
       "group": "Margarin och blandade fetter",
       "category": "Hård matfettsblandning"
     },
@@ -6372,6 +6470,20 @@
       "slug": "isbergssallat",
       "group": "Grönsaker och svamp",
       "category": "Grönsaker"
+    },
+    {
+      "id": 7298,
+      "name": "Iskaffe latte cappuccino macchiato burk flaska",
+      "slug": "iskaffe-latte-cappuccino-macchiato-burk-flaska",
+      "group": "Kaffe, te och kakao",
+      "category": "Kaffe te med mjölk"
+    },
+    {
+      "id": 5831,
+      "name": "Islatte smaksatt",
+      "slug": "islatte-smaksatt",
+      "group": "Kaffe, te och kakao",
+      "category": "Kaffe te med mjölk"
     },
     {
       "id": 6330,
@@ -7263,6 +7375,13 @@
       "category": "Bullar kakor tårtor mm"
     },
     {
+      "id": 7269,
+      "name": "Klarnat smör ghee",
+      "slug": "klarnat-smor-ghee",
+      "group": "Smör",
+      "category": "Smör"
+    },
+    {
       "id": 2229,
       "name": "Klassisk gräddsås fett 6%",
       "slug": "klassisk-graddsas-fett-6",
@@ -7327,8 +7446,8 @@
     },
     {
       "id": 4,
-      "name": "Kokosfett",
-      "slug": "kokosfett",
+      "name": "Kokosfett fullhärdat",
+      "slug": "kokosfett-fullhardat",
       "group": "Vegetabiliskt fett och olja",
       "category": "Övrigt fett (ister, talg, kokosfett)"
     },
@@ -7338,6 +7457,13 @@
       "slug": "kokosflingor",
       "group": "Nöt eller frö produkt",
       "category": "Nötter frön"
+    },
+    {
+      "id": 7266,
+      "name": "Kokosmjölk fett ca 18%",
+      "slug": "kokosmjolk-fett-ca-18",
+      "group": "Nöt eller frö produkt",
+      "category": "Vegetabiliska produkter och mjölkersättning"
     },
     {
       "id": 1590,
@@ -7987,7 +8113,7 @@
       "id": 1397,
       "name": "Krabba kokt",
       "slug": "krabba-kokt",
-      "group": "Fisk och skaldjur",
+      "group": "Fisk",
       "category": "Skaldjur bläckfisk färsk fryst kokt"
     },
     {
@@ -9020,6 +9146,20 @@
       "category": "Pastarätter"
     },
     {
+      "id": 7294,
+      "name": "Latte Macchiato",
+      "slug": "latte-macchiato",
+      "group": "Kaffe, te och kakao",
+      "category": "Kaffe te med mjölk"
+    },
+    {
+      "id": 7296,
+      "name": "Latte smaksatt m. vispad grädde",
+      "slug": "latte-smaksatt-m-vispad-gradde",
+      "group": "Kaffe, te och kakao",
+      "category": "Kaffe te med mjölk"
+    },
+    {
       "id": 1285,
       "name": "Lax gravad",
       "slug": "lax-gravad",
@@ -9339,7 +9479,7 @@
       "name": "Linssoppa m. coucous veg.",
       "slug": "linssoppa-m-coucous-veg",
       "group": "Baljväxträtter",
-      "category": ""
+      "category": "Grönsaks- rotfrukts- baljväxträtter o produkter"
     },
     {
       "id": 903,
@@ -9441,8 +9581,8 @@
     },
     {
       "id": 2472,
-      "name": "Lättmargarin fett 28% berikad typ Mini Lätta",
-      "slug": "lattmargarin-fett-28-berikad-typ-mini-latta",
+      "name": "Lättmargarin fett 30% berikad typ Mini Lätta",
+      "slug": "lattmargarin-fett-30-berikad-typ-mini-latta",
       "group": "Margarin och blandade fetter",
       "category": "Hård matfettsblandning"
     },
@@ -9454,9 +9594,16 @@
       "category": "Hård matfettsblandning"
     },
     {
-      "id": 4105,
-      "name": "Lättmargarin fett 40% berikad typ Coop",
-      "slug": "lattmargarin-fett-40-berikad-typ-coop",
+      "id": 2192,
+      "name": "Lättmargarin fett 39% berikad typ Lätta",
+      "slug": "lattmargarin-fett-39-berikad-typ-latta",
+      "group": "Margarin och blandade fetter",
+      "category": "Hård matfettsblandning"
+    },
+    {
+      "id": 7263,
+      "name": "Lättmargarin fett 40% berikad",
+      "slug": "lattmargarin-fett-40-berikad",
       "group": "Margarin och blandade fetter",
       "category": "Hård matfettsblandning"
     },
@@ -9468,18 +9615,18 @@
       "category": "Hård matfettsblandning"
     },
     {
-      "id": 2192,
-      "name": "Lättmargarin fett 40% berikad typ Lätta",
-      "slug": "lattmargarin-fett-40-berikad-typ-latta",
-      "group": "Margarin och blandade fetter",
-      "category": "Hård matfettsblandning"
-    },
-    {
       "id": 151,
       "name": "Lättmjölk fett 0,5% berikad",
       "slug": "lattmjolk-fett-0-5-berikad",
       "group": "Mjölk",
       "category": "Mjölk"
+    },
+    {
+      "id": 5132,
+      "name": "Lättsmör fett ca 60%",
+      "slug": "lattsmor-fett-ca-60",
+      "group": "Smör",
+      "category": "Smör"
     },
     {
       "id": 1382,
@@ -9829,7 +9976,7 @@
       "name": "Mandelmassa",
       "slug": "mandelmassa",
       "group": "Nöt eller frö produkt",
-      "category": ""
+      "category": "Frukt o nötgodisblandningar"
     },
     {
       "id": 6087,
@@ -9858,6 +10005,13 @@
       "slug": "mango-currysas-hemlagad",
       "group": "Sås i maträtt",
       "category": "Sås dressing majonnäs"
+    },
+    {
+      "id": 5135,
+      "name": "Mango frysvara",
+      "slug": "mango-frysvara",
+      "group": "Frukt och bär",
+      "category": "Frukt färsk fryst"
     },
     {
       "id": 634,
@@ -9979,23 +10133,37 @@
       "category": "Efterrätter"
     },
     {
+      "id": 2251,
+      "name": "Matfettsblandning extrasaltad fett 75% berikad",
+      "slug": "matfettsblandning-extrasaltad-fett-75-berikad",
+      "group": "Margarin och blandade fetter",
+      "category": "Hård matfettsblandning"
+    },
+    {
       "id": 4663,
-      "name": "Matfettsblandning fett 43% berikad typ Bregott mindre",
-      "slug": "matfettsblandning-fett-43-berikad-typ-bregott-mindre",
+      "name": "Matfettsblandning fett 40% berikad typ Bregott mindre",
+      "slug": "matfettsblandning-fett-40-berikad-typ-bregott-mindre",
       "group": "Margarin och blandade fetter",
       "category": "Hård matfettsblandning"
     },
     {
       "id": 6,
-      "name": "Matfettsblandning fett 60% berikad typ Bregott mellan",
-      "slug": "matfettsblandning-fett-60-berikad-typ-bregott-mellan",
+      "name": "Matfettsblandning fett 60% berikad",
+      "slug": "matfettsblandning-fett-60-berikad",
+      "group": "Margarin och blandade fetter",
+      "category": "Hård matfettsblandning"
+    },
+    {
+      "id": 7261,
+      "name": "Matfettsblandning fett 70% typ Flora & smör",
+      "slug": "matfettsblandning-fett-70-typ-flora-smor",
       "group": "Margarin och blandade fetter",
       "category": "Hård matfettsblandning"
     },
     {
       "id": 2190,
-      "name": "Matfettsblandning fett 75% berikad typ Bregott",
-      "slug": "matfettsblandning-fett-75-berikad-typ-bregott",
+      "name": "Matfettsblandning fett 75% berikad",
+      "slug": "matfettsblandning-fett-75-berikad",
       "group": "Margarin och blandade fetter",
       "category": "Hård matfettsblandning"
     },
@@ -10022,8 +10190,8 @@
     },
     {
       "id": 2037,
-      "name": "Matlagningsbas fett 7%",
-      "slug": "matlagningsbas-fett-7",
+      "name": "Matlagningsbas fett ca 5%",
+      "slug": "matlagningsbas-fett-ca-5",
       "group": "Mejeriprodukter",
       "category": "Grädde creme fraiche"
     },
@@ -10054,6 +10222,13 @@
       "slug": "matmuffins-grov-fullkorn-m-getost-farost-broccoli-spenat-soltorkade-tomater",
       "group": "Cerealierätter t.ex. klimp, risotto, pannkakor med fyllning, couscous, smörgåsar",
       "category": "Pizza paj pirog färdig smörgås"
+    },
+    {
+      "id": 3418,
+      "name": "Matolja",
+      "slug": "matolja",
+      "group": "Vegetabiliskt fett och olja",
+      "category": "Olja"
     },
     {
       "id": 6145,
@@ -10446,6 +10621,34 @@
       "slug": "mjolkpulver-fett-1",
       "group": "Övriga mjölkprodukter",
       "category": "Mjölk"
+    },
+    {
+      "id": 4537,
+      "name": "Mjölkpulver helmjölk",
+      "slug": "mjolkpulver-helmjolk",
+      "group": "Övriga mjölkprodukter",
+      "category": "Mjölk"
+    },
+    {
+      "id": 7026,
+      "name": "Mjölmålla quinoa mjöl",
+      "slug": "mjolmalla-quinoa-mjol",
+      "group": "Ris eller annat spannmål",
+      "category": "Mjöl stärkelse kli"
+    },
+    {
+      "id": 7025,
+      "name": "Mjölmålla quinoa okokt",
+      "slug": "mjolmalla-quinoa-okokt",
+      "group": "Ris eller annat spannmål",
+      "category": "Matgryn"
+    },
+    {
+      "id": 3518,
+      "name": "Mjölmålla quinoa röd kokt m. salt",
+      "slug": "mjolmalla-quinoa-rod-kokt-m-salt",
+      "group": "Ris eller annat spannmål",
+      "category": "Matgryn"
     },
     {
       "id": 6552,
@@ -11550,14 +11753,14 @@
       "id": 7142,
       "name": "Ost hårdost parmesan fett 29% typ Grana Padano",
       "slug": "ost-hardost-parmesan-fett-29-typ-grana-padano",
-      "group": "Extra hårdost",
+      "group": "Lagrad ost",
       "category": "Hård ost mm"
     },
     {
       "id": 103,
       "name": "Ost hårdost parmesan fett 30% typ Parmiggiano Reggiano",
       "slug": "ost-hardost-parmesan-fett-30-typ-parmiggiano-reggiano",
-      "group": "Extra hårdost",
+      "group": "Lagrad ost",
       "category": "Hård ost mm"
     },
     {
@@ -11565,7 +11768,7 @@
       "name": "Ost mozzarella fett 18%",
       "slug": "ost-mozzarella-fett-18",
       "group": "Färskost",
-      "category": "Hård ost mm"
+      "category": "Färskost o kvarg"
     },
     {
       "id": 1582,
@@ -11908,7 +12111,7 @@
       "name": "Pannkaka tunn m. vatten",
       "slug": "pannkaka-tunn-m-vatten",
       "group": "Pannkaka eller våffla",
-      "category": ""
+      "category": "Pannkakor, våfflor, crêpes"
     },
     {
       "id": 6750,
@@ -12261,18 +12464,18 @@
       "category": "Sås dressing majonnäs"
     },
     {
+      "id": 580,
+      "name": "Persika",
+      "slug": "persika",
+      "group": "Frukt och bär",
+      "category": "Frukt färsk fryst"
+    },
+    {
       "id": 625,
       "name": "Persika konserv. m. sockerlag",
       "slug": "persika-konserv-m-sockerlag",
       "group": "Processad frukt och bär",
       "category": "Frukt o bär konserverade"
-    },
-    {
-      "id": 580,
-      "name": "Persika nektarin",
-      "slug": "persika-nektarin",
-      "group": "Frukt och bär",
-      "category": "Frukt färsk fryst"
     },
     {
       "id": 608,
@@ -13014,7 +13217,7 @@
       "name": "Potatismos pulver tillagat",
       "slug": "potatismos-pulver-tillagat",
       "group": "Potatisrätter",
-      "category": ""
+      "category": "Potatisprodukter potatisrätter"
     },
     {
       "id": 266,
@@ -13136,6 +13339,13 @@
       "category": "Grönsaker"
     },
     {
+      "id": 6806,
+      "name": "Purjolök frysvara",
+      "slug": "purjolok-frysvara",
+      "group": "Grönsaker och svamp",
+      "category": "Grönsaker"
+    },
+    {
       "id": 452,
       "name": "Purjolök kokt m. salt",
       "slug": "purjolok-kokt-m-salt",
@@ -13148,6 +13358,13 @@
       "slug": "purjolok-stekt-el-wokad",
       "group": "Grönsaker och svamp",
       "category": "Grönsaker"
+    },
+    {
+      "id": 7188,
+      "name": "Pytt i panna hemlagad",
+      "slug": "pytt-i-panna-hemlagad",
+      "group": "Potatisrätter",
+      "category": "Potatisprodukter potatisrätter"
     },
     {
       "id": 263,
@@ -13167,13 +13384,6 @@
       "id": 255,
       "name": "Pytt i panna tillagad frysvara",
       "slug": "pytt-i-panna-tillagad-frysvara",
-      "group": "Potatisrätter",
-      "category": "Potatisprodukter potatisrätter"
-    },
-    {
-      "id": 7188,
-      "name": "Pyttipanna hemlagad",
-      "slug": "pyttipanna-hemlagad",
       "group": "Potatisrätter",
       "category": "Potatisprodukter potatisrätter"
     },
@@ -13274,27 +13484,6 @@
       "slug": "polsa-stekt-varmd",
       "group": "Kötträtt",
       "category": "Inälvor organ produkter o rätter"
-    },
-    {
-      "id": 7025,
-      "name": "Quinoa okokt",
-      "slug": "quinoa-okokt",
-      "group": "Ris eller annat spannmål",
-      "category": "Matgryn"
-    },
-    {
-      "id": 3518,
-      "name": "Quinoa röd kokt m. salt",
-      "slug": "quinoa-rod-kokt-m-salt",
-      "group": "Ris eller annat spannmål",
-      "category": "Matgryn"
-    },
-    {
-      "id": 7026,
-      "name": "Quinoamjöl",
-      "slug": "quinoamjol",
-      "group": "Ris eller annat spannmål",
-      "category": "Mjöl stärkelse kli"
     },
     {
       "id": 548,
@@ -13479,6 +13668,13 @@
       "category": "Kött processat"
     },
     {
+      "id": 7268,
+      "name": "Renfett",
+      "slug": "renfett",
+      "group": "Andra djurfetter",
+      "category": "Övrigt fett (ister, talg, kokosfett)"
+    },
+    {
       "id": 4126,
       "name": "Renlever stekt m. salt",
       "slug": "renlever-stekt-m-salt",
@@ -13503,14 +13699,14 @@
       "id": 1063,
       "name": "Rimmat sidfläsk el. stekfläsk stekt m. löksås",
       "slug": "rimmat-sidflask-el-stekflask-stekt-m-loksas",
-      "group": "Rött kött",
+      "group": "Kötträtt",
       "category": "Köttprodukter kötträtter"
     },
     {
       "id": 1064,
       "name": "Rimmat sidfläsk panerat stekt",
       "slug": "rimmat-sidflask-panerat-stekt",
-      "group": "Rött kött",
+      "group": "Kötträtt",
       "category": "Köttprodukter kötträtter"
     },
     {
@@ -13633,6 +13829,13 @@
       "category": "Ris risnudlar"
     },
     {
+      "id": 804,
+      "name": "Ris råris kokt m. salt",
+      "slug": "ris-raris-kokt-m-salt",
+      "group": "Ris eller annat spannmål",
+      "category": "Ris risnudlar"
+    },
+    {
       "id": 2517,
       "name": "Ris råris långkornigt kokt m. salt fullkorn",
       "slug": "ris-raris-langkornigt-kokt-m-salt-fullkorn",
@@ -13686,14 +13889,14 @@
       "name": "Ris vildris kokt m. salt",
       "slug": "ris-vildris-kokt-m-salt",
       "group": "Ris eller annat spannmål",
-      "category": "Ris risnudlar"
+      "category": "Matgryn"
     },
     {
       "id": 817,
       "name": "Ris vildris okokt",
       "slug": "ris-vildris-okokt",
       "group": "Ris eller annat spannmål",
-      "category": "Ris risnudlar"
+      "category": "Matgryn"
     },
     {
       "id": 811,
@@ -13742,7 +13945,7 @@
       "name": "Rismjöl vitt",
       "slug": "rismjol-vitt",
       "group": "Cerealier eller cerealielika mjölprodukter och derivat",
-      "category": "Mjöl stärkelse kli"
+      "category": "Ris risnudlar"
     },
     {
       "id": 840,
@@ -13946,13 +14149,6 @@
       "slug": "rakostsallad-m-morot-apple-paprika-purjolok",
       "group": "Grönsaker, rotfrukter och svamp",
       "category": "Grönsaks- rotfrukts- baljväxträtter o produkter"
-    },
-    {
-      "id": 804,
-      "name": "Råris kokt m. salt",
-      "slug": "raris-kokt-m-salt",
-      "group": "Ris eller annat spannmål",
-      "category": "Ris risnudlar"
     },
     {
       "id": 293,
@@ -14652,14 +14848,14 @@
       "name": "Sesamkaka m. socker olja typ somalisk sisin",
       "slug": "sesamkaka-m-socker-olja-typ-somalisk-sisin",
       "group": "Nöt eller frö produkt",
-      "category": "Frukt o nötblandningar bars"
+      "category": "Bars proteinbar muslibar mm"
     },
     {
       "id": 3059,
       "name": "Sesamkakor sesamkex",
       "slug": "sesamkakor-sesamkex",
       "group": "Nöt eller frö produkt",
-      "category": "Frukt o nötblandningar bars"
+      "category": "Bars proteinbar muslibar mm"
     },
     {
       "id": 38,
@@ -14771,7 +14967,7 @@
       "name": "Sill inlagd u. lag",
       "slug": "sill-inlagd-u-lag",
       "group": "Fisk",
-      "category": "Fisk färsk fryst kokt"
+      "category": "Fisk o skaldjursprodukter o rätter"
     },
     {
       "id": 1281,
@@ -15041,8 +15237,8 @@
     },
     {
       "id": 31,
-      "name": "Smör osaltat fett 80%",
-      "slug": "smor-osaltat-fett-80",
+      "name": "Smör osaltat fett ca 80%",
+      "slug": "smor-osaltat-fett-ca-80",
       "group": "Smör",
       "category": "Smör"
     },
@@ -16143,7 +16339,7 @@
       "name": "Tempeh",
       "slug": "tempeh",
       "group": "Vegetabiliska mejeriprodukter",
-      "category": "Ost med vegetabiliskt fett"
+      "category": "Baljväxter (bönor, linser och ärter)"
     },
     {
       "id": 1960,
@@ -16206,7 +16402,7 @@
       "name": "Tofu fast",
       "slug": "tofu-fast",
       "group": "Vegetabiliska mejeriprodukter",
-      "category": "Ost med vegetabiliskt fett"
+      "category": "Baljväxter (bönor, linser och ärter)"
     },
     {
       "id": 364,
@@ -16367,7 +16563,7 @@
       "name": "Tonfiskröra hemlagad",
       "slug": "tonfiskrora-hemlagad",
       "group": "Fisk- och skaldjursrätt",
-      "category": "Fisk o skaldjursprodukter o rätter"
+      "category": "Majonnässallad röror"
     },
     {
       "id": 1335,
@@ -16605,6 +16801,13 @@
       "name": "Vaniljsås ätf.",
       "slug": "vaniljsas-atf",
       "group": "Mejeriprodukter",
+      "category": "Söta soppor kräm o efterrättssås"
+    },
+    {
+      "id": 7265,
+      "name": "Vaniljsås ätf. kyld",
+      "slug": "vaniljsas-atf-kyld",
+      "group": "Övriga mjölkprodukter",
       "category": "Söta soppor kräm o efterrättssås"
     },
     {
@@ -16969,6 +17172,13 @@
       "name": "Vispgrädde ersättningsprod. mjölk olja fett 20%",
       "slug": "vispgradde-ersattningsprod-mjolk-olja-fett-20",
       "group": "Mejeriprodukter",
+      "category": "Grädde creme fraiche"
+    },
+    {
+      "id": 7264,
+      "name": "Vispgrädde ersättningsprod. mjölk olja fett ca 30%",
+      "slug": "vispgradde-ersattningsprod-mjolk-olja-fett-ca-30",
+      "group": "Grädde",
       "category": "Grädde creme fraiche"
     },
     {
@@ -17535,21 +17745,21 @@
       "id": 82,
       "name": "Ädelost blågrön mögelost fett 30%",
       "slug": "adelost-blagron-mogelost-fett-30",
-      "group": "Halvhård ost",
+      "group": "Lagrad ost",
       "category": "Dessertost"
     },
     {
       "id": 7141,
       "name": "Ädelost blågrön mögelost fett ca 35%",
       "slug": "adelost-blagron-mogelost-fett-ca-35",
-      "group": "Halvhård ost",
+      "group": "Lagrad ost",
       "category": "Dessertost"
     },
     {
       "id": 102,
       "name": "Ädelost blågrön mögelost fett över 40%",
       "slug": "adelost-blagron-mogelost-fett-over-40",
-      "group": "Mjukost",
+      "group": "Lagrad ost",
       "category": "Dessertost"
     },
     {
@@ -17647,6 +17857,13 @@
       "id": 1227,
       "name": "Äggvita rå",
       "slug": "aggvita-ra",
+      "group": "Ägg",
+      "category": "Ägg"
+    },
+    {
+      "id": 7267,
+      "name": "Äggvita rå eko.",
+      "slug": "aggvita-ra-eko",
       "group": "Ägg",
       "category": "Ägg"
     },
