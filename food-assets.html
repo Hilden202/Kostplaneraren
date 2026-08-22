@@ -5,7 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bildöversikt – Kostplaneraren</title>
-  <meta name="description" content="Följ Kostplanerarens växande bildbibliotek och föreslå bildlänkar för livsmedel som saknar bild.">
+  <meta name="description"
+    content="Följ Kostplanerarens växande bildbibliotek och föreslå bildlänkar för livsmedel som saknar bild.">
   <link rel="icon" href="/favicon.ico">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/food-assets.css">
@@ -38,8 +39,20 @@
       <div>
         <p class="hero-kicker">Publik bildöversikt</p>
         <h2 id="progressTitle">Fler livsmedelsbilder, ett steg i taget.</h2>
-        <p>När ett livsmedel får en bild här visas den automatiskt i Kostplaneraren. Saknas bilden används kategoriikonen tills vidare.</p>
-        <p class="hero-progress"><strong id="progressRatio">0 av 0</strong> bilder klara</p>
+        <p>
+          När ett livsmedel får en bild här visas den automatiskt i Kostplaneraren.
+          Saknas bilden används kategoriikonen tills vidare.
+        </p>
+
+        <p>
+          Bildbiblioteket byggs och kvalitetssäkras löpande med egenutvecklade verktyg,
+          AI-generering och automatisk bildoptimering. Målet är ett komplett och enhetligt
+          bibliotek med webbanpassade bilder för hela Kostplaneraren.
+        </p>
+
+        <p class="hero-progress">
+          <strong id="progressRatio">0 av 0</strong> bilder klara
+        </p>
       </div>
       <a class="hero-suggest-link" href="#assetSearch">
         <i class="fa-regular fa-images" aria-hidden="true"></i>
@@ -82,7 +95,8 @@
     <section class="asset-list-shell">
       <div class="list-header">
         <span id="visibleCount">0 rader</span>
-        <span id="imagePathHint">Bilder använder /images/foods/&lt;slug&gt;.webp och visas automatiskt i Kostplaneraren.</span>
+        <span id="imagePathHint">Bilder använder /images/foods/&lt;slug&gt;.webp och visas automatiskt i
+          Kostplaneraren.</span>
       </div>
 
       <div class="asset-list" id="assetList" aria-live="polite"></div>
