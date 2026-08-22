@@ -6,6 +6,7 @@ import { access, link, readdir, readFile, unlink, writeFile } from "node:fs/prom
 import path from "node:path";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
+import sharp from "sharp";
 
 const REPO_ROOT = fileURLToPath(new URL("../../", import.meta.url));
 const FOODS_PATH = path.join(REPO_ROOT, "data", "foods.json");
@@ -14,8 +15,11 @@ const MANIFEST_SCRIPT_PATH = path.join(REPO_ROOT, "script", "generate-food-image
 const OPENAI_IMAGE_GENERATION_URL = "https://api.openai.com/v1/images/generations";
 const OPENAI_IMAGE_MODEL = "gpt-image-2";
 const OPENAI_IMAGE_SIZE = "1536x1024";
-const OPENAI_IMAGE_QUALITY = "high";
+const OPENAI_IMAGE_QUALITY = "medium";
 const OPENAI_IMAGE_FORMAT = "webp";
+const TARGET_IMAGE_WIDTH = 768;
+const TARGET_IMAGE_HEIGHT = 512;
+const TARGET_WEBP_QUALITY = 80;
 const MAX_BATCH_SIZE = 50;
 const execFileAsync = promisify(execFile);
 
@@ -283,26 +287,32 @@ function isWebpBuffer(buffer) {
     && buffer.subarray(8, 12).toString("ascii") === "WEBP";
 }
 
-async function verifyWebpImageFile(filePath) {
+function assertWebpBuffer(buffer, label) {
+  if (!isWebpBuffer(buffer)) {
+    throw new Error(`${label} is not a WebP image`);
+  }
+}
+
+async function verifyWebpImageFile(filePath, options = {}) {
   const buffer = await readFile(filePath);
 
-  if (!isWebpBuffer(buffer)) {
-    throw new Error(`${repoPath(filePath)} is not a WebP image`);
-  }
+  assertWebpBuffer(buffer, repoPath(filePath));
 
   try {
-    const { stdout } = await execFileAsync("sips", [
-      "-g",
-      "pixelWidth",
-      "-g",
-      "pixelHeight",
-      filePath
-    ]);
-    const width = Number(stdout.match(/pixelWidth:\s*(\d+)/)?.[1]);
-    const height = Number(stdout.match(/pixelHeight:\s*(\d+)/)?.[1]);
+    const metadata = await sharp(filePath).metadata();
+    const width = metadata.width;
+    const height = metadata.height;
 
     if (!Number.isFinite(width) || width <= 0 || !Number.isFinite(height) || height <= 0) {
       throw new Error("missing image dimensions");
+    }
+
+    if (options.width && width !== options.width) {
+      throw new Error(`expected width ${options.width}, got ${width}`);
+    }
+
+    if (options.height && height !== options.height) {
+      throw new Error(`expected height ${options.height}, got ${height}`);
     }
   } catch (error) {
     throw new Error(`Saved file is not a readable WebP image: ${error.message}`);
@@ -357,26 +367,43 @@ async function requestOpenAIImage({ prompt, apiKey }) {
 
   const buffer = Buffer.from(b64Json, "base64");
 
-  if (!isWebpBuffer(buffer)) {
-    throw new Error("OpenAI Image API did not return WebP data even though output_format=webp was requested");
-  }
+  assertWebpBuffer(buffer, "OpenAI Image API response");
 
   return buffer;
 }
 
 async function saveNewWebpImage(buffer, targetPath) {
-  const tempPath = path.join(
-    path.dirname(targetPath),
-    `${path.basename(targetPath)}.${process.pid}.${Date.now()}.tmp`
-  );
+  const tempBase = `${path.basename(targetPath)}.${process.pid}.${Date.now()}`;
+  const originalTempPath = path.join(path.dirname(targetPath), `${tempBase}.source.tmp`);
+  const optimizedTempPath = path.join(path.dirname(targetPath), `${tempBase}.optimized.tmp`);
   let targetCreated = false;
 
   try {
-    await writeFile(tempPath, buffer, { flag: "wx" });
-    await verifyWebpImageFile(tempPath);
-    await link(tempPath, targetPath);
+    assertWebpBuffer(buffer, "OpenAI Image API response");
+    await writeFile(originalTempPath, buffer, { flag: "wx" });
+    await verifyWebpImageFile(originalTempPath);
+
+    await sharp(originalTempPath)
+      .resize({
+        width: TARGET_IMAGE_WIDTH,
+        height: TARGET_IMAGE_HEIGHT,
+        fit: "inside",
+        withoutEnlargement: false
+      })
+      .webp({ quality: TARGET_WEBP_QUALITY })
+      .toFile(optimizedTempPath);
+
+    await verifyWebpImageFile(optimizedTempPath, {
+      width: TARGET_IMAGE_WIDTH,
+      height: TARGET_IMAGE_HEIGHT
+    });
+
+    await link(optimizedTempPath, targetPath);
     targetCreated = true;
-    await verifyWebpImageFile(targetPath);
+    await verifyWebpImageFile(targetPath, {
+      width: TARGET_IMAGE_WIDTH,
+      height: TARGET_IMAGE_HEIGHT
+    });
   } catch (error) {
     if (targetCreated) {
       await unlink(targetPath).catch(() => {});
@@ -390,7 +417,10 @@ async function saveNewWebpImage(buffer, targetPath) {
 
     throw error;
   } finally {
-    await unlink(tempPath).catch((error) => {
+    await unlink(originalTempPath).catch((error) => {
+      if (error?.code !== "ENOENT") throw error;
+    });
+    await unlink(optimizedTempPath).catch((error) => {
       if (error?.code !== "ENOENT") throw error;
     });
   }
@@ -612,8 +642,15 @@ async function main() {
   throw new Error(`Unknown command: ${command}`);
 }
 
-main().catch((error) => {
-  console.error("Food Image Generator failed");
-  console.error(error instanceof Error ? error.message : error);
-  process.exitCode = 1;
-});
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+  main().catch((error) => {
+    console.error("Food Image Generator failed");
+    console.error(error instanceof Error ? error.message : error);
+    process.exitCode = 1;
+  });
+}
+
+export {
+  saveNewWebpImage,
+  verifyWebpImageFile
+};

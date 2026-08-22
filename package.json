@@ -1,0 +1,10 @@
+{
+  "name": "kostplaneraren",
+  "private": true,
+  "scripts": {
+    "optimize:ai-food-images": "node tools/food-image-generator/optimize-ai-images.mjs"
+  },
+  "dependencies": {
+    "sharp": "0.35.3"
+  }
+}
