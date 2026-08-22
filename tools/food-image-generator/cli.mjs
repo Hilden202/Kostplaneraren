@@ -273,6 +273,13 @@ function foodSpecificPrompt(food) {
       "The image may show one or several chokladbollar if that gives a more natural and clearer presentation."
     ].join("\n");
   }
+  if (food.slug === "duva-ra") {
+    return [
+      `Food: ${food.name}`,
+      "Raw pigeon meat from the bird, uncooked.",
+      "Clearly show pigeon as raw poultry/game meat. Do not depict dairy products, cheese, cottage cheese, curds, or unrelated foods."
+    ].join("\n");
+  }
 
   return `Food: ${food.name}`;
 }
@@ -406,7 +413,7 @@ async function saveNewWebpImage(buffer, targetPath) {
     });
   } catch (error) {
     if (targetCreated) {
-      await unlink(targetPath).catch(() => {});
+      await unlink(targetPath).catch(() => { });
     }
 
     if (error?.code === "EEXIST") {
