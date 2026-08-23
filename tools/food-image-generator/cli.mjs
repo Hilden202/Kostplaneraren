@@ -280,6 +280,12 @@ function foodSpecificPrompt(food) {
       "Clearly show pigeon as raw poultry/game meat. Do not depict dairy products, cheese, cottage cheese, curds, or unrelated foods."
     ].join("\n");
   }
+  if (food.slug === "filbunke-m-gradde") {
+    return [
+      `Food: ${food.name}`,
+      "Swedish cultured milk (filbunke) with cream, served cold in a small bowl, plain white creamy dairy product, no meat, no potatoes, no savory stew."
+    ].join("\n");
+  }
 
   return `Food: ${food.name}`;
 }
