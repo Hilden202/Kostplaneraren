@@ -13,7 +13,7 @@ const FOODS_PATH = path.join(REPO_ROOT, "data", "foods.json");
 const IMAGE_DIR = path.join(REPO_ROOT, "images", "foods");
 const MANIFEST_SCRIPT_PATH = path.join(REPO_ROOT, "script", "generate-food-image-manifest.mjs");
 const OPENAI_IMAGE_GENERATION_URL = "https://api.openai.com/v1/images/generations";
-const OPENAI_IMAGE_MODEL = "gpt-image-2";
+const OPENAI_IMAGE_MODEL = "gpt-image-2.5-flare";
 const OPENAI_IMAGE_SIZE = "1536x1024";
 const OPENAI_IMAGE_QUALITY = "medium";
 const OPENAI_IMAGE_FORMAT = "webp";
@@ -21,6 +21,8 @@ const TARGET_IMAGE_WIDTH = 768;
 const TARGET_IMAGE_HEIGHT = 512;
 const TARGET_WEBP_QUALITY = 80;
 const MAX_BATCH_SIZE = 50;
+const MAX_IMAGE_REQUEST_RETRIES = 3;
+const RATE_LIMIT_SAFETY_MARGIN_MS = 1_000;
 const execFileAsync = promisify(execFile);
 
 const BASE_IMAGE_PROMPT = `
@@ -348,41 +350,104 @@ function extractOpenAIError(payload) {
     || "Unknown OpenAI API error";
 }
 
-async function requestOpenAIImage({ prompt, apiKey }) {
-  const response = await fetch(OPENAI_IMAGE_GENERATION_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: OPENAI_IMAGE_MODEL,
-      prompt,
-      n: 1,
-      size: OPENAI_IMAGE_SIZE,
-      quality: OPENAI_IMAGE_QUALITY,
-      output_format: OPENAI_IMAGE_FORMAT,
-      background: "opaque"
-    })
-  });
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-  const payload = await response.json().catch(() => null);
+function retryAfterHeaderDelayMs(value) {
+  if (!value) return null;
 
-  if (!response.ok) {
-    throw new Error(`OpenAI Image API returned ${response.status}: ${extractOpenAIError(payload)}`);
+  const seconds = Number(value);
+
+  if (Number.isFinite(seconds) && seconds >= 0) {
+    return seconds * 1000;
   }
 
-  const b64Json = payload?.data?.[0]?.b64_json;
+  const retryAt = Date.parse(value);
 
-  if (!b64Json) {
-    throw new Error("OpenAI Image API response did not include image data");
+  if (Number.isFinite(retryAt)) {
+    return Math.max(0, retryAt - Date.now());
   }
 
-  const buffer = Buffer.from(b64Json, "base64");
+  return null;
+}
 
-  assertWebpBuffer(buffer, "OpenAI Image API response");
+function retryDelayFromMessage(message) {
+  const text = String(message || "");
+  const match = text.match(/try again in\s+(\d+(?:\.\d+)?)\s*(ms|milliseconds?|s|sec|secs|seconds?|m|min|mins|minutes?)/i);
 
-  return buffer;
+  if (!match) return null;
+
+  const amount = Number(match[1]);
+  const unit = match[2].toLowerCase();
+
+  if (!Number.isFinite(amount) || amount < 0) return null;
+  if (unit.startsWith("ms") || unit.startsWith("millisecond")) return amount;
+  if (unit === "m" || unit.startsWith("min")) return amount * 60_000;
+
+  return amount * 1000;
+}
+
+function rateLimitRetryDelayMs(response, message) {
+  return retryAfterHeaderDelayMs(response.headers.get("retry-after"))
+    ?? retryDelayFromMessage(message)
+    ?? 10_000;
+}
+
+function formatRetrySeconds(ms) {
+  return Math.ceil(ms / 1000);
+}
+
+async function requestOpenAIImage({ prompt, apiKey, progressLabel = "Image request" }) {
+  for (let attempt = 0; attempt <= MAX_IMAGE_REQUEST_RETRIES; attempt++) {
+    const response = await fetch(OPENAI_IMAGE_GENERATION_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: OPENAI_IMAGE_MODEL,
+        prompt,
+        n: 1,
+        size: OPENAI_IMAGE_SIZE,
+        quality: OPENAI_IMAGE_QUALITY,
+        output_format: OPENAI_IMAGE_FORMAT,
+        background: "opaque"
+      })
+    });
+
+    const payload = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      const message = extractOpenAIError(payload);
+
+      if (response.status === 429 && attempt < MAX_IMAGE_REQUEST_RETRIES) {
+        const retryNumber = attempt + 1;
+        const waitMs = rateLimitRetryDelayMs(response, message) + RATE_LIMIT_SAFETY_MARGIN_MS;
+
+        console.log(`${progressLabel} Rate limited. Retrying in ${formatRetrySeconds(waitMs)}s... (${retryNumber}/${MAX_IMAGE_REQUEST_RETRIES})`);
+        await delay(waitMs);
+        continue;
+      }
+
+      throw new Error(`OpenAI Image API returned ${response.status}: ${message}`);
+    }
+
+    const b64Json = payload?.data?.[0]?.b64_json;
+
+    if (!b64Json) {
+      throw new Error("OpenAI Image API response did not include image data");
+    }
+
+    const buffer = Buffer.from(b64Json, "base64");
+
+    assertWebpBuffer(buffer, "OpenAI Image API response");
+
+    return buffer;
+  }
+
+  throw new Error("OpenAI Image API request failed after retry limit");
 }
 
 async function saveNewWebpImage(buffer, targetPath) {
@@ -439,9 +504,9 @@ async function saveNewWebpImage(buffer, targetPath) {
   }
 }
 
-async function generateAndSaveFoodImage({ food, targetPath, apiKey }) {
+async function generateAndSaveFoodImage({ food, targetPath, apiKey, progressLabel }) {
   const prompt = buildImagePrompt(food);
-  const imageBuffer = await requestOpenAIImage({ prompt, apiKey });
+  const imageBuffer = await requestOpenAIImage({ prompt, apiKey, progressLabel });
   await saveNewWebpImage(imageBuffer, targetPath);
 }
 
@@ -486,7 +551,7 @@ async function generateOneImage(slugArg) {
   console.log("");
   console.log("Requesting exactly one image from OpenAI Image API...");
 
-  await generateAndSaveFoodImage({ food, targetPath, apiKey });
+  await generateAndSaveFoodImage({ food, targetPath, apiKey, progressLabel: "[1/1]" });
 
   console.log(`Saved:       ${repoPath(targetPath)}`);
   console.log("Verified:    readable WebP image");
@@ -539,7 +604,8 @@ async function runBatch(countArg) {
       await generateAndSaveFoodImage({
         food: item.food,
         targetPath: item.targetPath,
-        apiKey
+        apiKey,
+        progressLabel: prefix
       });
       succeeded++;
       console.log(`${prefix} Saved: ${repoPath(item.targetPath)}`);
